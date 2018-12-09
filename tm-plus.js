@@ -8,7 +8,7 @@
 // @grant        none
 // @require http://code.jquery.com/jquery-1.8.24.min.js
 // ==/UserScript==
-
+// update test
 var $ = window.jQuery;
 
 var flightBox = document.getElementById('dvFlightStrip');
