@@ -14,15 +14,14 @@
 
 // remove aeromag logo until dark version is created
 var images = document.getElementsByTagName('img');
-var l = images.length;
-for (var i = 0; i < l; i++) {
+for (var i = 0; i < images.length; i++) {
     images[0].parentNode.removeChild(images[0]);
 }
 
-
+// create tickers for theme selection
 var themeTicker = document.createElement("input");
 themeTicker.type = "checkbox";
-themeTicker.checked = true;
+// themeTicker.checked = true;
 themeTicker.onclick = changeTheme;
 document.body.appendChild(themeTicker);
 
@@ -97,8 +96,8 @@ function changeTheme() {
         GM_addStyle("body, tr, th, tbody {border: 0px solid #fff !important}");
         GM_addStyle(".ui-state-default {background: #9399a0 !important}");
         GM_addStyle(".ui-state-default {color: #e0e0e0 !important}");
-        GM_addStyle("body, html, footer, div, th, tr, td, section, select, input, textarea, li " + themeBg);
-        GM_addStyle("body, html, h3, footer, div, th, tr, td, select, input, textarea, a " + themeFg);
+        GM_addStyle("body, html, footer, div, th, tr, td, section, select, button, input, textarea, li " + themeBg);
+        GM_addStyle("body, html, h3, footer, div, th, tr, td, select, button, section, input, textarea, a " + themeFg);
     }
     GM_addStyle(".ui-state-active {border: 1px solid  #d3dce0 !important}");
 
