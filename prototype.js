@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         gsplus
+// @name         gs proto
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
@@ -16,16 +16,31 @@
 
 (function() {
     'use strict';
+    var labelWidth = "85px";
+    var inputWidth = "145px";
+    var inputMarginTop = "8px";
+    var buttonWidth = "80px";
     // *** flight strip addons ***
     var flightBox = document.getElementById('dvFlightStrip');
 
     var addedComponents = document.createElement("div");
-    flightBox.parentElement.insertBefore(addedComponents, flightBox);
+//     addedComponents.style.width = "40%";
+    addedComponents.id = "addedComps";
+
+    var inputBase = document.createElement("input");
+
+    // Airline Code Select
+    var airlineLabel = document.createElement("div");
+    airlineLabel.style.textAlign = "center";
+    airlineLabel.style.width = labelWidth;
+    airlineLabel.style.float = 'left';
+    airlineLabel.style.marginTop = inputMarginTop;
+    airlineLabel.innerHTML = "Airline";
 
     var selectList = document.createElement("select");
     selectList.id = "mySelect";
-    selectList.style.marginLeft = "2px";
-    selectList.style.width = "150px";
+    selectList.style.marginLeft = "10px";
+    selectList.style.width = "152px";
     var array = ["","WJA","WEN","PCO","QXE","TSC"];
     for (var i = 0; i < array.length; i++) {
         var option = document.createElement("option");
@@ -33,80 +48,67 @@
         option.text = array[i];
         selectList.appendChild(option);
     }
-    addedComponents.appendChild(selectList);
-
-    var addAlCode=document.createElement("input");
-    addAlCode.type="button";
-    addAlCode.value="Go";
-    addAlCode.onclick=alCode;
-    addAlCode.style.marginLeft="10px";
-    addedComponents.appendChild(addAlCode);
-
+   
     // flight number
-    addedComponents.appendChild(document.createElement("br"));
-
     var flightCodeLabel=document.createElement("div");
-    flightCodeLabel.style.width = "50px";
+    flightCodeLabel.style.width = labelWidth;
+    flightCodeLabel.style.textAlign = "center";
     flightCodeLabel.style.float='left';
-    flightCodeLabel.style.marginTop="8px";
+    flightCodeLabel.style.marginTop = inputMarginTop;
     flightCodeLabel.innerHTML = "Flight";
-    addedComponents.appendChild(flightCodeLabel);
 
     var flightCode=document.createElement("input");
-    flightCode.style.width = "50px";
+    flightCode.style.width = inputWidth;
     flightCode.type="text";
-    flightCode.style.marginRight="10px";
-    addedComponents.appendChild(flightCode);
+    flightCode.style.marginLeft = "10px";
 
     // tail number
-    addedComponents.appendChild(document.createElement("br"));
-
-    var tailCode=document.createElement("input");
-    tailCode.style.width = "50px";
-    tailCode.type="text";
-    tailCode.style.marginRight="10px";
-    addedComponents.appendChild(tailCode);
-
     var tailCodeLabel=document.createElement("div");
-    tailCodeLabel.style.width = "50px";
-    tailCodeLabel.style.float='left';
-    tailCodeLabel.style.marginTop="8px";
+    tailCodeLabel.style.textAlign = "center";
+    tailCodeLabel.style.width = labelWidth;
+    tailCodeLabel.style.float = 'left';
+    tailCodeLabel.style.marginTop = inputMarginTop;
     tailCodeLabel.innerHTML = "Tail";
-    addedComponents.appendChild(tailCodeLabel);
+
+    var tailCode = document.createElement("input");
+    tailCode.style.width = inputWidth;
+    tailCode.type="text";
+    tailCode.style.marginLeft="10px";
 
     // gate field
-    addedComponents.appendChild(document.createElement("br"));
-
-    var gateCode=document.createElement("input");
-    gateCode.style.width = "50px";
-    gateCode.type="text";
-    gateCode.style.marginRight="10px";
-    addedComponents.appendChild(gateCode);
-
-    var gateCodeLabel=document.createElement("div");
-    gateCodeLabel.style.width = "50px";
+    var gateCodeLabel = document.createElement("div");
+    gateCodeLabel.style.textAlign = "center";
+    gateCodeLabel.style.width = labelWidth;
     gateCodeLabel.style.float='left';
-    gateCodeLabel.style.marginTop="8px";
+    gateCodeLabel.style.marginTop = inputMarginTop;
     gateCodeLabel.innerHTML = "Gate";
-    addedComponents.appendChild(gateCodeLabel);
+
+    var gateCode = document.createElement("input");
+    gateCode.style.width = inputWidth;
+    gateCode.type="text";
+    gateCode.style.marginLeft="10px";
 
     // t1 button
-    addedComponents.appendChild(document.createElement("br"));
-
     var t1Button=document.createElement("input");
-    t1Button.style.width = "50px";
+    t1Button.style.width = buttonWidth;
     t1Button.type="button";
     t1Button.value="T1";
     t1Button.onclick=selectT1;
-    addedComponents.appendChild(t1Button);
 
     // t4 button
     var t4Button=document.createElement("input");
-    t4Button.style.width = "50px";
+    t4Button.style.width = buttonWidth;
     t4Button.type="button";
     t4Button.value="T4";
     t4Button.onclick=selectT4;
-    addedComponents.appendChild(t4Button);
+
+    // go button
+    var goButton=document.createElement("input");
+    goButton.type="button";
+    goButton.value="Go";
+    goButton.style = "background-color: #333 !important";
+    goButton.style.width = buttonWidth;
+    goButton.onclick = alCode;
 
     // select t1
     function selectT1() {
@@ -120,13 +122,32 @@
         treatment1.selectedIndex = 2;
     }
 
+    // add components at end in one block for easier reorganizing
+    addedComponents.appendChild(airlineLabel);
+    addedComponents.appendChild(selectList);
+    addedComponents.appendChild(document.createElement("br"));
+    addedComponents.appendChild(flightCodeLabel);
+    addedComponents.appendChild(flightCode);
+    addedComponents.appendChild(document.createElement("br"));
+    addedComponents.appendChild(tailCode);
+    addedComponents.appendChild(tailCodeLabel);
+    addedComponents.appendChild(document.createElement("br"));
+    addedComponents.appendChild(gateCode);
+    addedComponents.appendChild(gateCodeLabel);
+    addedComponents.appendChild(document.createElement("br"));
+    addedComponents.appendChild(t1Button);
+    addedComponents.appendChild(t4Button);
+    addedComponents.appendChild(goButton);
+    flightBox.parentElement.insertBefore(addedComponents, flightBox);
 
     function alCode() {
-        var flightCodeBox = document.getElementById('txtFlightNo');
 
+        var flightCodeBox = document.getElementById('txtFlightNo');
         var select = document.getElementById('mySelect');
         var regBox = document.getElementById('txtRegistration');
-        var oaciDD = document.getElementById('CarrierCdOACI');
+
+        flightCodeBox.value = flightCode.value;
+        regBox.value = tailCode.value;
 
         var hasFlightCode = false;
         var hasRegCode = false;
@@ -154,9 +175,6 @@
         } else {
             regBox.value = select.value + regBox.value;
         }
-
-        oaciDD.value = select.value;
-        // end
 
         var acBox = document.getElementById("txtAircraftTypeCd");
         regBox = document.getElementById('txtRegistration');
@@ -187,104 +205,175 @@
             if (regBox.value.includes("GTXO")) acBox.value = "A321";
         }
 
-        //
-        //
-        //
-        //
-        //
+        // Gate Selector
+        var gateSelect = document.getElementById("Gate_Id");
 
-        var gateSelect = document.getElemendById("DeicingLocation_Id");
-
-        if (gateCode.value = "") {
-            alert("d");
-            gateSelect.value = "327";
+        if (gateCode.value == "A2" || gateCode.value == "a2") {
+            gateSelect.value = "12778";}
+        else if (gateCode.value == "A9" || gateCode.value == "a9") {
+            gateSelect.value = "12930";}
+        else if (gateCode.value == "1") {
+            gateSelect.value = 126;}
+        else if (gateCode.value == "110") {
+            gateSelect.value = 973;}
+        else if (gateCode.value == "111") {
+            gateSelect.value = 974;}
+        else if (gateCode.value == "2") {
+            gateSelect.value = 127;}
+        else if (gateCode.value == "3") {
+            gateSelect.value = 128;}
+        else if (gateCode.value == "4") {
+            gateSelect.value = 129;}
+        else if (gateCode.value == "5") {
+            gateSelect.value = 130;}
+        else if (gateCode.value == "6") {
+            gateSelect.value = 131;}
+        else if (gateCode.value == "11") {
+            gateSelect.value = 133;}
+        else if (gateCode.value == "12") {
+            gateSelect.value = 132;}
+        else if (gateCode.value == "13") {
+            gateSelect.value = 134;}
+        else if (gateCode.value == "14") {
+            gateSelect.value = 135;}
+        else if (gateCode.value == "15") {
+            gateSelect.value = 136;}
+        else if (gateCode.value == "16") {
+            gateSelect.value = 137;}
+        else if (gateCode.value == "17") {
+            gateSelect.value = 138;}
+        else if (gateCode.value == "18") {
+            gateSelect.value = 139;}
+        else if (gateCode.value == "19") {
+            gateSelect.value = 140;}
+        else if (gateCode.value == "20") {
+            gateSelect.value = 141;}
+        else if (gateCode.value == "21") {
+            gateSelect.value = 142;}
+        else if (gateCode.value == "22") {
+            gateSelect.value = 143;}
+        else if (gateCode.value == "23") {
+            gateSelect.value = 144;}
+        else if (gateCode.value == "24") {
+            gateSelect.value = 145;}
+        else if (gateCode.value == "31") {
+            gateSelect.value = 149;}
+        else if (gateCode.value == "32") {
+            gateSelect.value = 150;}
+        else if (gateCode.value == "33") {
+            gateSelect.value = 151;}
+        else if (gateCode.value == "34") {
+            gateSelect.value = 152;}
+        else if (gateCode.value == "35") {
+            gateSelect.value = 153;}
+        else if (gateCode.value == "36") {
+            gateSelect.value = 154;}
+        else if (gateCode.value == "37") {
+            gateSelect.value = 155;}
+        else if (gateCode.value == "38") {
+            gateSelect.value = 156;}
+        else if (gateCode.value == "39") {
+            gateSelect.value = 157;}
+        else if (gateCode.value == "40") {
+            gateSelect.value = 158;}
+        else if (gateCode.value == "50") {
+            gateSelect.value = 332;}
+        else if (gateCode.value == "51") {
+            gateSelect.value = 333;}
+        else if (gateCode.value == "52") {
+            gateSelect.value = 334;}
+        else if (gateCode.value == "53") {
+            gateSelect.value = 335;}
+        else if (gateCode.value == "54") {
+            gateSelect.value = 336;}
+        else if (gateCode.value == "55") {
+            gateSelect.value = 337;}
+        else if (gateCode.value == "56") {
+            gateSelect.value = 338;}
+        else if (gateCode.value == "57") {
+            gateSelect.value = 339;}
+        else if (gateCode.value == "58") {
+            gateSelect.value = 340;}
+        else if (gateCode.value == "59") {
+            gateSelect.value = 341;}
+        else if (gateCode.value == "61") {
+            gateSelect.value = 342;}
+        else if (gateCode.value == "62") {
+            gateSelect.value = 343;}
+        else if (gateCode.value == "63") {
+            gateSelect.value = 344;}
+        else if (gateCode.value == "64") {
+            gateSelect.value = 345;}
+        else if (gateCode.value == "65") {
+            gateSelect.value = 346;}
+        else if (gateCode.value == "70") {
+            gateSelect.value = 347;}
+        else if (gateCode.value == "71") {
+            gateSelect.value = 348;}
+        else if (gateCode.value == "72") {
+            gateSelect.value = 349;}
+        else if (gateCode.value == "73") {
+            gateSelect.value = 350;}
+        else if (gateCode.value == "74") {
+            gateSelect.value = 355;}
+        else if (gateCode.value == "75") {
+            gateSelect.value = 356;}
+        else if (gateCode.value == "76") {
+            gateSelect.value = 357;}
+        else if (gateCode.value == "77") {
+            gateSelect.value = 358;}
+        else if (gateCode.value == "78") {
+            gateSelect.value = 359;}
+        else if (gateCode.value == "79") {
+            gateSelect.value = 360;}
+        else if (gateCode.value == "80") {
+            gateSelect.value = 361;}
+        else if (gateCode.value == "81") {
+            gateSelect.value = 362;}
+        else if (gateCode.value == "82") {
+            gateSelect.value = 377;}
+        else if (gateCode.value == "83") {
+            gateSelect.value = 378;}
+        else if (gateCode.value == "84") {
+            gateSelect.value = 365;}
+        else if (gateCode.value == "85") {
+            gateSelect.value = 366;}
+        else if (gateCode.value == "86") {
+            gateSelect.value = 381;}
+        else if (gateCode.value == "87") {
+            gateSelect.value = 382;}
+        else if (gateCode.value == "88") {
+            gateSelect.value = 383;}
+        else if (gateCode.value == "89") {
+            gateSelect.value = 384;}
+        else if (gateCode.value == "90") {
+            gateSelect.value = 385;}
+        else if (gateCode.value == "91") {
+            gateSelect.value = 386;}
+        else if (gateCode.value == "92") {
+            gateSelect.value = 387;}
+        else if (gateCode.value == "93") {
+            gateSelect.value = 388;}
+        else if (gateCode.value == "94") {
+            gateSelect.value = 389;}
+        else if (gateCode.value == "95") {
+            gateSelect.value = 390;}
+        else if (gateCode.value == "96") {
+            gateSelect.value = 391;}
+        else if (gateCode.value == "392") {
+            gateSelect.value = 97;}
+        else if(gateCode.value == "126") {
+            gateSelect.value = 12776;}
+        else if (gateCode.value == "127") {
+            gateSelect.value = 12776;
+        } else {
+            alert("Invalid Gate: " + gateCode.value);
         }
-        //         <option value="327">Taxiway TX IN JULIETT</option>
-        // <option value="13023">Gate GATE</option>
-        // <option value="973">Gate N110</option>
-        // <option value="126">Gate A1</option>
-        // <option value="127">Gate A2</option>
-        // <option value="974">Gate N111</option>
-        // <option value="128">Gate A3</option>
-        // <option value="129">Gate A4</option>
-        // <option value="130">Gate A5</option>
-        // <option value="131">Gate A6</option>
-        // <option value="133">Gate A11</option>
-        // <option value="132">Gate A12</option>
-        // <option value="134">Gate A13</option>
-        // <option value="135">Gate A14</option>
-        // <option value="136">Gate A15</option>
-        // <option value="137">Gate A16</option>
-        // <option value="138">Gate A17</option>
-        // <option value="139">Gate A18</option>
-        // <option value="140">Gate A19</option>
-        // <option value="141">Gate A20</option>
-        // <option value="142">Gate A21</option>
-        // <option value="143">Gate A22</option>
-        // <option value="144">Gate A23</option>
-        // <option value="145">Gate A24</option>
-        // <option value="149">Gate B31</option>
-        // <option value="150">Gate B32</option>
-        // <option value="151">Gate B33</option>
-        // <option value="152">Gate B34</option>
-        // <option value="153">Gate B35</option>
-        // <option value="154">Gate B36</option>
-        // <option value="155">Gate B37</option>
-        // <option value="156">Gate B38</option>
-        // <option value="157">Gate B39</option>
-        // <option value="158">Gate B40</option>
-        // <option value="332">Gate C50</option>
-        // <option value="333">Gate C51</option>
-        // <option value="334">Gate C52</option>
-        // <option value="335">Gate C53</option>
-        // <option value="336">Gate C54</option>
-        // <option value="337">Gate C55</option>
-        // <option value="338">Gate C56</option>
-        // <option value="339">Gate C57</option>
-        // <option value="340">Gate C58</option>
-        // <option value="341">Gate C59</option>
-        // <option value="342">Gate C61</option>
-        // <option value="343">Gate C62</option>
-        // <option value="344">Gate C63</option>
-        // <option value="345">Gate C64</option>
-        // <option value="346">Gate C65</option>
-        // <option value="347">Gate C70</option>
-        // <option value="348">Gate C71</option>
-        // <option value="349">Gate C72</option>
-        // <option value="350">Gate C73</option>
-        // <option value="355">Gate D74</option>
-        // <option value="356">Gate D75</option>
-        // <option value="357">Gate C76</option>
-        // <option value="358">Gate C77</option>
-        // <option value="359">Gate D78</option>
-        // <option value="360">Gate D79</option>
-        // <option value="361">Gate D80</option>
-        // <option value="362">Gate D81</option>
-        // <option value="377">Gate E82</option>
-        // <option value="378">Gate E83</option>
-        // <option value="365">Gate D84</option>
-        // <option value="366">Gate D85</option>
-        // <option value="381">Gate E86</option>
-        // <option value="382">Gate E87</option>
-        // <option value="383">Gate D88</option>
-        // <option value="384">Gate D89</option>
-        // <option value="385">Gate E90</option>
-        // <option value="386">Gate E91</option>
-        // <option value="387">Gate D92</option>
-        // <option value="388">Gate D93</option>
-        // <option value="389">Gate E94</option>
-        // <option value="390">Gate E95</option>
-        // <option value="391">Gate E96</option>
-        // <option value="392">Gate E97</option>
-        // </select>
 
-        //
-        //
-        //
-        //
-        //
-
-
+        // clear inputs
+        gateCode.value = "";
+        flightCode.value = "";
+        tailCode.value = "";
     }
 
     function findFirstDescendant(parent, tagname) {
@@ -298,35 +387,3 @@
 
     // Your code here...
 })();
-
-// old code
-
-// var flightStrip = document.getElementById('frmFlightStrip');
-// var fsWrapper = document.createElement("fieldset");
-// fsWrapper.classList.add("border1");
-// fsWrapper.id="fsWrapper";
-// fsWrapper.innerHTML = "<legend style=\"font-size:16px; font-weight:bold;\">Flight Strip</legend>";
-// flightStrip.parentNode.insertBefore(fsWrapper, flightStrip);
-// fsWrapper.appendChild(flightStrip);
-
-// time boxes
-
-// var t1Start = document.getElementById("DeicingTimes_Type1StartTimeStr");
-// t1Start.classList.remove("time");
-// t1Start.style = "width: 67px;margin: 0px;padding: 0px; color: #000 !important";
-// var t1Stop = document.getElementById("DeicingTimes_Type1FinishTimeStr");
-// t1Stop.classList.remove("time");
-// t1Stop.style = "width: 67px;margin: 0px;padding: 0px; color: #000 !important";
-// var t4Start = document.getElementById("DeicingTimes_Type4StartTimeStr");
-// t4Start.classList.remove("time");
-// t4Start.style = "width: 67px;margin: 0px;padding: 0px; color: #000 !important";
-// var t4Stop = document.getElementById("DeicingTimes_Type4FinishTimeStr");
-// t4Stop.classList.remove("time");
-// t4Stop.style = "width: 67px;margin: 0px;padding: 0px; color: #000 !important";
-
-// var br = document.createElement("br");
-// findFirstDescendant("frmFlightStrip", "th").remove();
-// findFirstDescendant("frmFlightStrip", "table").classList.remove("border1");
-
-
-// time boxes
