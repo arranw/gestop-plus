@@ -129,11 +129,11 @@
     addedComponents.appendChild(flightCodeLabel);
     addedComponents.appendChild(flightCode);
     addedComponents.appendChild(document.createElement("br"));
-    addedComponents.appendChild(tailCode);
     addedComponents.appendChild(tailCodeLabel);
+    addedComponents.appendChild(tailCode);    
     addedComponents.appendChild(document.createElement("br"));
-    addedComponents.appendChild(gateCode);
     addedComponents.appendChild(gateCodeLabel);
+    addedComponents.appendChild(gateCode);
     addedComponents.appendChild(document.createElement("br"));
     addedComponents.appendChild(t1Button);
     addedComponents.appendChild(t4Button);
