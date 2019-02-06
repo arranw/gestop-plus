@@ -106,7 +106,7 @@
     var goButton=document.createElement("input");
     goButton.type="button";
     goButton.value="Go";
-    goButton.style = "background-color: #333 !important";
+    goButton.style = "border: 2px solid #33BBFF !important";
     goButton.style.width = buttonWidth;
     goButton.onclick = alCode;
 
