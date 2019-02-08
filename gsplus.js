@@ -48,7 +48,7 @@
         option.text = array[i];
         selectList.appendChild(option);
     }
-   
+
     // flight number
     var flightCodeLabel=document.createElement("div");
     flightCodeLabel.style.width = labelWidth;
@@ -130,7 +130,7 @@
     addedComponents.appendChild(flightCode);
     addedComponents.appendChild(document.createElement("br"));
     addedComponents.appendChild(tailCodeLabel);
-    addedComponents.appendChild(tailCode);    
+    addedComponents.appendChild(tailCode);
     addedComponents.appendChild(document.createElement("br"));
     addedComponents.appendChild(gateCodeLabel);
     addedComponents.appendChild(gateCode);
@@ -146,10 +146,10 @@
 
         var select = document.getElementById('mySelect');
         var regBox = document.getElementById('txtRegistration');
-        var oaciDD = document.getElementById('CarrierCdOACI');
+        var flightBox = document.getElementById('txtFlightNo');
 
-        oaciDD.value = tailCode.value;
-        regBox.value = flightCode.value;
+        flightBox.value = flightCode.value;
+        regBox.value = tailCode.value;
 
         var hasFlightCode = false;
         var hasRegCode = false;
@@ -177,8 +177,6 @@
         } else {
             regBox.value = select.value + regBox.value;
         }
-
-        oaciDD.value = select.value;
 
         var acBox = document.getElementById("txtAircraftTypeCd");
         regBox = document.getElementById('txtRegistration');
