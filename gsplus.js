@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         gs proto
+// @name         gs plus
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
