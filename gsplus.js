@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         gs plus
+// @name         gs proto
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
@@ -148,13 +148,14 @@
         var regBox = document.getElementById('txtRegistration');
         var flightBox = document.getElementById('txtFlightNo');
         var acBox = document.getElementById("txtAircraftTypeCd");
+        var carrierCode = document.getElementById("CarrierCdOACI");
 
         var hasFlightCode = false;
         var hasRegCode = false;
 
         var flightTextValue = flightCodeBox.value.toUpperCase();
         var regTextValue = regBox.value.toUpperCase();
-
+        carrierCode.value = select.value;
         
 
 
