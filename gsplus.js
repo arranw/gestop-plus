@@ -194,7 +194,7 @@
                         acBox.value = "B38M";
                     } else if (j >= 400 && j <= 460) {
                         acBox.value = "DH8D";
-                    } else if (j >= 575 && j <= 589) {
+                    } else if (j >= 570 && j <= 589) {
                         acBox.value = "SF34";
                     } else if (j >= 601 && j <= 615) {
                         acBox.value = "B736";
