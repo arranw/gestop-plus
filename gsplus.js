@@ -184,21 +184,21 @@
         for (var j =0; j < 999; j++) {
             if (j == parseInt(regBox.value.substr(3, regBox.value.length))) {
                 //                 alert("nonono");
-                if (j > 0 && j < 15) {
+                if (j >= 0 && j <= 15) {
                     acBox.value = "B73W";
-                } else if (j > 201 && j < 266) {
+                } else if (j >= 201 && j <= 266) {
                     acBox.value = "B73W";
-                } else if (j > 300 && j < 399) {
+                } else if (j >= 300 && j <= 399) {
                     acBox.value = "B38M";
-                } else if (j > 400 && j < 460) {
+                } else if (j >= 400 && j <= 460) {
                     acBox.value = "DH8D";
-                } else if (j > 575 && j < 589) {
+                } else if (j >= 575 && j <= 589) {
                     acBox.value = "SF34";
-                } else if (j > 601 && j < 615) {
+                } else if (j >= 601 && j <= 615) {
                     acBox.value = "B736";
-                } else if (j > 670 && j < 673) {
+                } else if (j >= 670 && j <= 673) {
                     acBox.value = "B76W";
-                } else if (j > 801 && j < 853) {
+                } else if (j >= 801 && j <= 853) {
                     acBox.value = "B73H";
                 } else {
 
