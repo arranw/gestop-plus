@@ -36,7 +36,7 @@ function changeTheme() {
     var bgBlack = "#000";
     var black = "#000";
     var white = "#FFF";
-    var magBlue = "#33BBFF";
+    var magBlue = "#DDD";
     var green = "#00FF3E";
     var darkGreen = "#00B32C";
     var red = "#Fd4a3e";
@@ -102,6 +102,23 @@ function changeTheme() {
     GM_addStyle(".ui-state-active {border: 1px solid  #d3dce0 !important}");
 
 }
+
+var coldStorageTd = document.getElementById("tdFlightsInColdStorage");
+var coldStorageCb = document.createElement("input");
+coldStorageCb.type = "checkbox";
+coldStorageCb.onclick = moveColdStorage;
+document.body.appendChild(coldStorageCb);
+
+function moveColdStorage() {
+    GM_addStyle(".top-padding {padding-top: 16%}");
+    GM_addStyle(".notop-padding {padding-top: 0}");
+    if (coldStorageCb.checked){
+        coldStorageTd.classList.add("top-padding");
+    } else {
+        coldStorageTd.classList.remove("top-padding");
+    }
+}
+
 
 function findFirstDescendant(parent, tagname) {
    parent = document.getElementById(parent);
