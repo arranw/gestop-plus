@@ -13,8 +13,9 @@
     'use strict';
     var flightBox = document.getElementById('dvFlightStrip');
 
-    var hiColor = "#33BBFF88";
+    var hiColor = "#33BBFF";
     var loColor = "#fff";
+    var borderColor = "#000";
 
     const docCont = document.createElement("div");
     docCont.id = "gsplus";
@@ -133,6 +134,7 @@
     goButton.style.textAlign = "center";
     goButton.style.lineHeight = "40px";
     goButton.style.cursor = "pointer";
+    goButton.id = "go-button";
     goButton.onclick = go;
 
     flightLabel.appendChild(flightInput);
@@ -176,9 +178,9 @@
         }
 
         if (treatment === "") {
-            propButton.style.backgroundColor = "#fff";
-            t4Button.style.backgroundColor = "#fff";
-            t1Button.style.backgroundColor = "#fff";
+            propButton.style.backgroundColor = loColor;
+            t4Button.style.backgroundColor = loColor;
+            t1Button.style.backgroundColor = loColor;
             selectedTreatments[0][1] = false;
             selectedTreatments[1][1] = false;
             selectedTreatments[2][1] = false;
@@ -202,7 +204,7 @@
         input.style.fontFamily = "Consolas";
         input.style.fontSize = "1.5em";
         input.style.textAlign = "center";
-        input.style.color = "#33BBFF";
+        input.style.color = hiColor;
         input.style.margin = "0px";
         input.maxLength = "4";
         input.style.textTransform = "uppercase";
@@ -216,6 +218,7 @@
         label.style.textAlign = "center";
         label.style.border = "1px solid black";
         label.style.fontSize = "1.25em";
+        label.classList.add("input-label");
     }
 
     function formatBtn(elem) {
@@ -295,8 +298,6 @@
             airlineButtons[2].style.backgroundColor = loColor;
             airlineButtons[3].style.backgroundColor = loColor;
         }
-
-
     }
 
     function parseGateNumber(input) {
@@ -406,7 +407,9 @@
         return "";
     }
 
-    if (false) {
+
+
+    if (true) {
         // remove aeromag logo until dark version is created
         var images = document.getElementsByTagName('img');
         for (var i = 0; i < images.length; i++) {
@@ -419,21 +422,12 @@
         // themeTicker.checked = true;
         themeTicker.onclick = changeTheme;
         themeTicker.id = "theme-cb";
+        themeTicker.checked = true;
         document.body.appendChild(themeTicker);
 
         changeTheme();
-        function changeTheme() {
-            var bgBlack = "#000";
-            var black = "#000";
-            var white = "#FFF";
-            var magBlue = "#DDD";
-            var green = "#00FF3E";
-            var darkGreen = "#00B32C";
-            var red = "#Fd4a3e";
-            var darkRed = "#B3000C";
-            var themeBg;
-            var themeFg;
 
+        function changeTheme() {
             findFirstDescendant("body", "table").classList.remove("border1");
             findFirstDescendant("ui-id-2", "td").classList.remove("border1");
             document.getElementById("tdFlightsInColdStorage").classList.remove("border1");
@@ -442,48 +436,49 @@
             GM_addStyle(".border2 {padding: 5px!important}");
             document.getElementById("tdFlightsInProgress").classList.add("border2");
 
-
             if (themeTicker.checked) {
                 loColor = "#000";
-                themeBg = "{background-color: " + black + " !important}";
-                themeFg = "{color: " + magBlue + " !important}";
-
-                GM_addStyle(".ui-state-default {background: " + bgBlack + " !important}");
-                GM_addStyle(".ui-state-default {color: " + white + "!important}");
-                GM_addStyle("fieldset {border: 0px !important}");
-
-                GM_addStyle("div:not(#gsplus) " + themeBg);
-                GM_addStyle("div:not(#gsplus) " + themeFg);
-
-//                 GM_addStyle("body, html, footer, div, th, tr, td, section, select, input, textarea, button, li " + themeBg);
-//                 GM_addStyle("body, html, h3, footer, div, th, tr, td, select, section, input, textarea, button, a " + themeFg);
-
-//                 GM_addStyle("#gsplus {border: 1px solid " + magBlue + " !important}");
-//                 GM_addStyle("#gsplus div {border: 1px solid " + magBlue + "!important}");
-//                 GM_addStyle("#flight-input {border-left: 2px solid " + magBlue + " !important}");
-//                 GM_addStyle("#treatment-container {border: 0px solid " + magBlue + " !important}");
+                borderColor = "#fff";
+                GM_addStyle(":not(button):not(.treatment-button):not(.airline-button) {background-color: black !important; }");
+                GM_addStyle(":not(button):not(.treatment-button):not(.flight-input) {color: #DDD !important; }");
             } else {
                 loColor = "#fff";
-                themeBg = "{background-color: #fff !important}";
-                themeFg = "{color: #000 !important}";
-                GM_addStyle("body, tr, th, tbody {border: 0px solid #fff !important}");
-                GM_addStyle(".ui-state-default {background: #9399a0 !important}");
-                GM_addStyle(".ui-state-default {color: #e0e0e0 !important}");
-
-                GM_addStyle("div:not(#gsplus)" + themeBg);
-                GM_addStyle("div:not(#gsplus)" + themeFg);
-
-//                 GM_addStyle("body, html, footer, div, th, tr, td, section, select, button, input, textarea, li " + themeBg);
-//                 GM_addStyle("body, html, h3, footer, div, th, tr, td, select, button, section, input, textarea, a " + themeFg);
-
-
-//                 GM_addStyle("#gsplus {border: 1px solid " + black + " !important}");
-//                 GM_addStyle("#gsplus div {border: 1px solid " + black + "!important}");
-//                 GM_addStyle("#flight-input {border-left: 2px solid " + black + " !important}");
-//                 GM_addStyle("#treatment-container {border: 0px solid " + black + " !important}");
-                flightInput.style.backgroundColor = "#000";
+                borderColor = "#000";
+                GM_addStyle(":not(button):not(.treatment-button):not(.airline-button) {background-color: white !important;}");
+                GM_addStyle(":not(button):not(.treatment-button):not(.flight-input) {color: #000 !important;}");
             }
-            GM_addStyle(".ui-state-active {border: 1px solid  #d3dce0 !important}");
+            GM_addStyle(".airline-button {border: 1px solid " + borderColor + " !important;}");
+            GM_addStyle(".treatment-button {border: 1px solid " + borderColor + " !important;}");
+            GM_addStyle("#gsplus {border: 1px solid " + borderColor + " !important;}");
+            GM_addStyle(".input-label {border: 1px solid " + borderColor + " !important;}");
+            GM_addStyle(".flight-input {border-left: 2px solid " + borderColor + " !important;}");
+            GM_addStyle("#go-button {border: 1px solid " + borderColor + " !important;}");
+
+
+            // color airline buttons
+            for (let i = 0; i < airlineButtons.length; i++) {
+                if (airlineInfo[i][1]) {
+                    airlineButtons[i].style.backgroundColor = hiColor;
+                } else {
+                    airlineButtons[i].style.backgroundColor = loColor;
+                }
+            }
+            // color treatment buttons
+            if (selectedTreatments[0][1]){
+                    t1Button.style.backgroundColor = hiColor;
+                } else {
+                    t1Button.style.backgroundColor = loColor;
+                }
+                if (selectedTreatments[1][1]){
+                    t4Button.style.backgroundColor = hiColor;
+                } else {
+                    t4Button.style.backgroundColor = loColor;
+                }
+                if (selectedTreatments[2][1]){
+                    propButton.style.backgroundColor = hiColor;
+                } else {
+                    propButton.style.backgroundColor = loColor;
+                }
         }
 
         var coldStorageTd = document.getElementById("tdFlightsInColdStorage");
