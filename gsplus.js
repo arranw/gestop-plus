@@ -286,7 +286,14 @@
             flightInput.value = "";
             tailInput.value = "";
             gateInput.value = ""
-
+            airlineInfo[0][1] = false;
+            airlineInfo[1][1] = false;
+            airlineInfo[2][1] = false;
+            airlineInfo[3][1] = false;
+            airlineButtons[0].style.backgroundColor = loColor;
+            airlineButtons[1].style.backgroundColor = loColor;
+            airlineButtons[2].style.backgroundColor = loColor;
+            airlineButtons[3].style.backgroundColor = loColor;
         }
 
 
