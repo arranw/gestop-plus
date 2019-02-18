@@ -1,4 +1,22 @@
-var flightBox = document.getElementById('dvFlightStrip');
+// ==UserScript==
+// @name         gs+
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        https://home.aeromag2000.com/gestoplight/
+// @grant        GM_addStyle
+// @require      http://code.jquery.com/jquery-1.8.24.min.js
+// @require      Common.js
+// @require      DeicingVM.js
+// @require      knockout-3.4.2.js
+// @downloadURL  https://raw.githubusercontent.com/arranw/gestop-plus/master/Gs-Plus.js
+// ==/UserScript==
+
+
+(function() {
+    'use strict';
+    var flightBox = document.getElementById('dvFlightStrip');
 
 const docCont = document.createElement("div");
 
@@ -378,3 +396,4 @@ function parseTailNumber(input) {
     console.log("unknown tail number");
     return "";
 }
+})();
