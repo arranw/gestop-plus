@@ -371,7 +371,7 @@ function parseTailNumber(input) {
     }
     i = 0;
 
-    for (var i = 0; i < 999; i++) {
+    for (i = 0; i < 999; i++) {
         if (i == parseInt(input)) {
             if (i >= 1 && i <= 15) {
                 return "B73W";
