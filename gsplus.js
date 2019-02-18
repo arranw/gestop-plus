@@ -6,11 +6,6 @@
 // @author       You
 // @match        https://home.aeromag2000.com/gestoplight/
 // @grant        GM_addStyle
-// @require      http://code.jquery.com/jquery-1.8.24.min.js
-// @require      Common.js
-// @require      DeicingVM.js
-// @require      knockout-3.4.2.js
-// @downloadURL  https://raw.githubusercontent.com/arranw/gestop-plus/master/Gs-Plus.js
 // ==/UserScript==
 
 
@@ -18,382 +13,496 @@
     'use strict';
     var flightBox = document.getElementById('dvFlightStrip');
 
-const docCont = document.createElement("div");
+    var hiColor = "#33BBFF88";
+    var loColor = "#fff";
 
-flightBox.parentElement.insertBefore(docCont, flightBox);
-docCont.style.margin = "20px";
-docCont.style.width = "200px";
-docCont.style.fontFamily = "Consolas";
-docCont.style.border = "1px solid black";
+    const docCont = document.createElement("div");
+    docCont.id = "gsplus";
+    docCont.style.margin = "0px";
+    docCont.style.width = "200px";
+    docCont.style.fontFamily = "Consolas";
+    docCont.style.border = "1px solid black";
+    flightBox.parentElement.insertBefore(docCont, flightBox);
 
-let airlineInfo = [["WJA"], ["WEN"], ["PCO"], [""]];
-let selectedTreatments = [["T1", false], ["T4", false], ["P", false]];
-let airlineButtons = [];
-let civilRegistrationKey = [["GTXO", "A321"]];
-
-
-for (let k = 0; k < airlineInfo.length; k++) {
-    airlineInfo[k].push(false);
-    let inputEl = document.createElement("input");
-    inputEl.type = "text";
-    inputEl.style.textTransform = "uppercase";
-    inputEl.maxLength = 3;
-    inputEl.style.fontFamily = "Consolas";
-    inputEl.style.fontSize = "1.5em";
-    inputEl.tabIndex = -1;
-    if (k !== airlineInfo.length - 1) {
-        inputEl.value = airlineInfo[k][0];
-        inputEl.readOnly = true;
-    }
-    airlineButtons.push(inputEl);
-    formatBtn(airlineButtons[k]);
-}
-
-// last airline box updates when it's changed
-airlineButtons[airlineButtons.length - 1].onchange = updateAirline;
-
-function updateAirline() {
-    airlineInfo[airlineInfo.length - 1][0] = (airlineButtons[airlineButtons.length - 1].value).toUpperCase();
-}
+    let airlineInfo = [["WJA"], ["WEN"], ["PCO"], [""]];
+    let selectedTreatments = [["T1", false], ["T4", false], ["P", false]];
+    let airlineButtons = [];
+    let civilRegistrationKey = [["GTXO", "A321"]];
 
 
-for (let i = 0; i < airlineButtons.length; i++) {
-    airlineButtons[i].innerHTML = airlineInfo[i][0];
-    airlineButtons[i].addEventListener("click", function () {
-        for (let j = 0; j < airlineButtons.length; j++) {
-            // airlineButtons[j].style.border = "1px solid #000";
-            airlineButtons[j].style.backgroundColor = "#fff";
-            airlineInfo[j][1] = false;
+    for (let k = 0; k < airlineInfo.length; k++) {
+        airlineInfo[k].push(false);
+        let inputEl = document.createElement("input");
+        inputEl.type = "text";
+        inputEl.style.textTransform = "uppercase";
+        inputEl.maxLength = 3;
+        inputEl.style.fontFamily = "Consolas";
+        inputEl.style.fontSize = "1.5em";
+        inputEl.tabIndex = -1;
+        if (k !== airlineInfo.length - 1) {
+            inputEl.value = airlineInfo[k][0];
+            inputEl.readOnly = true;
         }
-        airlineInfo[i][1] = true;
-        if (airlineInfo[i][1]) {
-            // airlineButtons[i].style.border = "3px solid #33BBFF";
-            airlineButtons[i].style.backgroundColor = "#33BBFF88";
-        } else {
-            // airlineButtons[j].style.border = "1px solid #000";
-            airlineButtons[i].style.backgroundColor = "#fff";
-        }
-    }, false);
-    docCont.appendChild(airlineButtons[i]);
-}
-
-
-var flightLabel = document.createElement("div");
-formatLabel(flightLabel);
-flightLabel.innerHTML = "Flight";
-
-var flightInput = document.createElement("input");
-formatInput(flightInput);
-
-var tailLabel = document.createElement("div");
-formatLabel(tailLabel);
-tailLabel.innerHTML = "Tail";
-
-var tailInput = document.createElement("input");
-formatInput(tailInput);
-
-var gateLabel = document.createElement("div");
-formatLabel(gateLabel);
-gateLabel.innerHTML = "Gate";
-
-var gateInput = document.createElement("input");
-formatInput(gateInput);
-
-var treatmentButtons = document.createElement("div");
-treatmentButtons.style.display = "flex";
-
-// t1 button
-var t1Button = document.createElement("div");
-formatTreatmentButton(t1Button);
-t1Button.innerHTML = "T1";
-t1Button.addEventListener("click", function () {
-    changeTreatment("T1")
-}, false);
-// t4 button
-var t4Button = document.createElement("div");
-formatTreatmentButton(t4Button);
-t4Button.innerHTML = "T4";
-t4Button.addEventListener("click", function () {
-    changeTreatment("T4")
-}, false);
-// props
-var propButton = document.createElement("div");
-formatTreatmentButton(propButton);
-propButton.innerHTML = "Props";
-propButton.addEventListener("click", function () {
-    changeTreatment("P")
-}, false);
-
-// go button
-var goButton = document.createElement("div");
-goButton.style.width = "100%";
-goButton.innerHTML = "Go";
-goButton.style.boxSizing = "border-box";
-goButton.style.border = "1px solid black";
-goButton.style.fontSize = "1.25em";
-goButton.style.textAlign = "center";
-goButton.style.lineHeight = "40px";
-goButton.style.cursor = "pointer";
-goButton.onclick = go;
-
-flightLabel.appendChild(flightInput);
-docCont.appendChild(flightLabel);
-
-tailLabel.appendChild(tailInput);
-docCont.appendChild(tailLabel);
-
-gateLabel.appendChild(gateInput);
-docCont.appendChild(gateLabel);
-
-treatmentButtons.appendChild(t1Button);
-treatmentButtons.appendChild(t4Button);
-treatmentButtons.appendChild(propButton);
-
-docCont.appendChild(treatmentButtons);
-docCont.appendChild(goButton);
-
-function changeTreatment(treatment) { // needs reformatting
-    var i;
-
-    if (treatment === "T1") {
-        selectedTreatments[0][1] = true; // enable T1
-        selectedTreatments[1][1] = false; // disable T4
-        t4Button.style.backgroundColor = "#fff";
-        t1Button.style.backgroundColor = "#33BBFF88";
-    } else if (treatment === "T4") {
-        selectedTreatments[0][1] = false; // disable T1
-        selectedTreatments[1][1] = true; // enable T4
-        t4Button.style.backgroundColor = "#33BBFF88";
-        t1Button.style.backgroundColor = "#fff";
-    }
-    if (treatment === "P") {
-        if (selectedTreatments[2][1] === true) {
-            propButton.style.backgroundColor = "#fff";
-            selectedTreatments[2][1] = false; // enable props
-        } else {
-            propButton.style.backgroundColor = "#33BBFF88";
-            selectedTreatments[2][1] = true; // enable props
-        }
+        airlineButtons.push(inputEl);
+        formatBtn(airlineButtons[k]);
     }
 
-    if (treatment === "") {
-        propButton.style.backgroundColor = "#fff";
-        t4Button.style.backgroundColor = "#fff";
-        t1Button.style.backgroundColor = "#fff";
-        selectedTreatments[0][1] = false;
-        selectedTreatments[1][1] = false;
-        selectedTreatments[2][1] = false;
+    // last airline box updates when it's changed
+    airlineButtons[airlineButtons.length - 1].onchange = updateAirline;
+
+    function updateAirline() {
+        airlineInfo[airlineInfo.length - 1][0] = (airlineButtons[airlineButtons.length - 1].value).toUpperCase();
     }
 
-    for (i = 0; i < selectedTreatments.length; i++) {
-        console.log(selectedTreatments[i][0] + " : " + selectedTreatments[i][1]);
-    }
-}
 
-function formatInput(input) {
-    input.type = "text";
-    input.style.boxSizing = "border-box";
-    input.style.float = "right";
-    input.style.width = "50.5%";
-    input.style.height = "100%";
-    input.style.borderLeft = "2px solid black";
-    input.style.borderRight = "0px solid black";
-    input.style.borderTop = "0px solid black";
-    input.style.borderBottom = "0px solid black";
-    input.style.fontFamily = "Consolas";
-    input.style.fontSize = "1.5em";
-    input.style.textAlign = "center";
-    input.style.color = "#33BBFF";
-    input.style.margin = "0px";
-    input.maxLength = "4";
-    input.style.textTransform = "uppercase";
-}
-
-
-function formatLabel(label) {
-    label.style.lineHeight = "40px";
-    label.style.height = "40px";
-    label.style.textAlign = "center";
-    label.style.border = "1px solid black";
-    label.style.fontSize = "1.25em";
-}
-
-function formatBtn(elem) {
-    elem.style.boxSizing = "border-box";
-    elem.style.textAlign = "center";
-    elem.style.width = (100 / airlineInfo.length) + "%";
-    elem.style.height = "40px";
-    elem.style.borderLeft = "1px solid #000";
-    elem.style.borderRight = "1px solid #000";
-    elem.style.borderTop = "1px solid #000";
-    elem.style.borderBottom = "1px solid #000";
-    elem.style.cursor = "pointer";
-    elem.style.margin = "0px";
-    // elem.style.backgroundColor = "#666";
-}
-
-function formatTreatmentButton(treatmentButton) {
-    treatmentButton.style.boxSizing = "border-box";
-    treatmentButton.style.textAlign = "center";
-    treatmentButton.style.width = 100 / 3 + "%";
-    treatmentButton.style.height = "40px";
-    treatmentButton.style.lineHeight = "40px";
-    treatmentButton.style.border = "1px solid black";
-    treatmentButton.style.fontSize = "1.25em";
-    treatmentButton.style.cursor = "pointer";
-}
-
-function go() {
-    const flightNumberElem = document.getElementById("txtFlightNo");
-    const tailNumberElem = document.getElementById("txtRegistration");
-    const aircraftElem = document.getElementById("txtAircraftTypeCd");
-    const gateElem = document.getElementById("Gate_Id");
-    const carrierElem = document.getElementById("CarrierCdOACI");
-
-    let selectedAirlineCode;
-    let airlineIsSelected = false;
-
-    for (var i = 0; i < airlineInfo.length; i++) {
-        if (airlineInfo[i][1]) {
-            selectedAirlineCode = airlineInfo[i][0];
-            airlineIsSelected = true;
-        }
-    }
-
-    aircraftElem.value = parseTailNumber(tailInput.value);
-    gateElem.value = parseGateNumber(parseInt(gateInput.value));
-
-    // ** TODO check tail number against Airline **
-
-    // assign flight and tail numbers to the form
-    if (airlineIsSelected) {
-        if (flightInput.value != "") {
-            flightNumberElem.value = selectedAirlineCode + flightInput.value;
-        }
-        if (tailInput.value != "") {
-            if (isNaN(tailInput.value)) {
-                tailNumberElem.value = tailInput.value.toUpperCase();
+    for (let i = 0; i < airlineButtons.length; i++) {
+        airlineButtons[i].innerHTML = airlineInfo[i][0];
+        airlineButtons[i].addEventListener("click", function () {
+            for (let j = 0; j < airlineButtons.length; j++) {
+                // airlineButtons[j].style.border = "1px solid #000";
+                airlineButtons[j].style.backgroundColor = loColor;
+                airlineInfo[j][1] = false;
+            }
+            airlineInfo[i][1] = true;
+            if (airlineInfo[i][1]) {
+                // airlineButtons[i].style.border = "3px solid #33BBFF";
+                airlineButtons[i].style.backgroundColor = hiColor;
             } else {
-                tailNumberElem.value = selectedAirlineCode + tailInput.value;
+                // airlineButtons[j].style.border = "1px solid #000";
+                airlineButtons[i].style.backgroundColor = loColor;
+            }
+        }, false);
+        docCont.appendChild(airlineButtons[i]);
+    }
+
+
+    var flightLabel = document.createElement("div");
+    formatLabel(flightLabel);
+    flightLabel.innerHTML = "Flight";
+
+    var flightInput = document.createElement("input");
+    formatInput(flightInput);
+
+    var tailLabel = document.createElement("div");
+    formatLabel(tailLabel);
+    tailLabel.innerHTML = "Tail";
+
+    var tailInput = document.createElement("input");
+    formatInput(tailInput);
+
+    var gateLabel = document.createElement("div");
+    formatLabel(gateLabel);
+    gateLabel.innerHTML = "Gate";
+
+    var gateInput = document.createElement("input");
+    formatInput(gateInput);
+
+    var treatmentButtons = document.createElement("div");
+    treatmentButtons.style.display = "flex";
+    treatmentButtons.id = "treatment-container";
+
+    // t1 button
+    var t1Button = document.createElement("div");
+    formatTreatmentButton(t1Button);
+    t1Button.innerHTML = "T1";
+    t1Button.addEventListener("click", function () {
+        changeTreatment("T1")
+    }, false);
+    // t4 button
+    var t4Button = document.createElement("div");
+    formatTreatmentButton(t4Button);
+    t4Button.innerHTML = "T4";
+    t4Button.addEventListener("click", function () {
+        changeTreatment("T4")
+    }, false);
+    // props
+    var propButton = document.createElement("div");
+    formatTreatmentButton(propButton);
+    propButton.innerHTML = "Props";
+    propButton.addEventListener("click", function () {
+        changeTreatment("P")
+    }, false);
+
+    // go button
+    var goButton = document.createElement("div");
+    goButton.style.width = "100%";
+    goButton.innerHTML = "Go";
+    goButton.style.boxSizing = "border-box";
+    goButton.style.border = "1px solid black";
+    goButton.style.fontSize = "1.25em";
+    goButton.style.textAlign = "center";
+    goButton.style.lineHeight = "40px";
+    goButton.style.cursor = "pointer";
+    goButton.onclick = go;
+
+    flightLabel.appendChild(flightInput);
+    docCont.appendChild(flightLabel);
+
+    tailLabel.appendChild(tailInput);
+    docCont.appendChild(tailLabel);
+
+    gateLabel.appendChild(gateInput);
+    docCont.appendChild(gateLabel);
+
+    treatmentButtons.appendChild(t1Button);
+    treatmentButtons.appendChild(t4Button);
+    treatmentButtons.appendChild(propButton);
+
+    docCont.appendChild(treatmentButtons);
+    docCont.appendChild(goButton);
+
+    function changeTreatment(treatment) { // needs reformatting
+        var i;
+
+        if (treatment === "T1") {
+            selectedTreatments[0][1] = true; // enable T1
+            selectedTreatments[1][1] = false; // disable T4
+            t4Button.style.backgroundColor = loColor;
+            t1Button.style.backgroundColor = hiColor;
+        } else if (treatment === "T4") {
+            selectedTreatments[0][1] = false; // disable T1
+            selectedTreatments[1][1] = true; // enable T4
+            t4Button.style.backgroundColor = hiColor;
+            t1Button.style.backgroundColor = loColor;
+        }
+        if (treatment === "P") {
+            if (selectedTreatments[2][1] === true) {
+                propButton.style.backgroundColor = loColor;
+                selectedTreatments[2][1] = false; // enable props
+            } else {
+                propButton.style.backgroundColor = hiColor;
+                selectedTreatments[2][1] = true; // enable props
             }
         }
-        carrierElem.value = selectedAirlineCode;
+
+        if (treatment === "") {
+            propButton.style.backgroundColor = "#fff";
+            t4Button.style.backgroundColor = "#fff";
+            t1Button.style.backgroundColor = "#fff";
+            selectedTreatments[0][1] = false;
+            selectedTreatments[1][1] = false;
+            selectedTreatments[2][1] = false;
+        }
+
+        for (i = 0; i < selectedTreatments.length; i++) {
+            console.log(selectedTreatments[i][0] + " : " + selectedTreatments[i][1]);
+        }
     }
 
-    commitTreatment();
-
-    // clear inputs
-    changeTreatment("");
-    flightInput.value = "";
-    tailInput.value = "";
-    gateInput.value = ""
-
-}
-
-function parseGateNumber(input) {
-    // gates with non-sequential values
-    if (input == 110) {
-        return 973;
-    } else if (input == 111) {
-        return 974;
-    } else if (input == 11) {
-        return 131;
-    } else if (input == 12) {
-        return 133;
-    } else if (input == 13) {
-        return 132;
-    } else if (input == 82) {
-        return 377;
-    } else if (input == 83) {
-        return 378;
-    } else if (input == 84) {
-        return 365;
-    } else if (input == 85) {
-        return 366;
-    } else if (input == 126) {
-        return 12776;
-    } else if (input == 127) {
-        return 12777;
+    function formatInput(input) {
+        input.type = "text";
+        input.style.boxSizing = "border-box";
+        input.style.float = "right";
+        input.style.width = "50.5%";
+        input.style.height = "100%";
+        input.style.borderLeft = "2px solid black";
+        input.style.borderRight = "0px solid black";
+        input.style.borderTop = "0px solid black";
+        input.style.borderBottom = "0px solid black";
+        input.style.fontFamily = "Consolas";
+        input.style.fontSize = "1.5em";
+        input.style.textAlign = "center";
+        input.style.color = "#33BBFF";
+        input.style.margin = "0px";
+        input.maxLength = "4";
+        input.style.textTransform = "uppercase";
+        input.classList.add("flight-input");
     }
 
-    // gates with sequential values
-    for (var i = 0; i < 130; i++) {
-        if (i == input) {
-            if (i >= 1 && i <=6) {
-                return i + 125; // magic numbers provided by Aeromag
-            }  else if (i >= 14 && i <= 24) {
-                return i + 121;
-            } else if (i >= 31 && i <= 40) {
-                return i + 118;
-            } else if (i >= 50 && i <= 59) {
-                return i + 282;
-            } else if (i >= 61 && i <= 65) {
-                return i + 281;
-            } else if (i >= 70 && i <= 73) {
-                return i + 277;
-            } else if (i >= 74 && i <= 81) {
-                return i + 281;
-            } else if (i >= 86 && i <= 97) {
-                return i + 295;
+
+    function formatLabel(label) {
+        label.style.lineHeight = "40px";
+        label.style.height = "40px";
+        label.style.textAlign = "center";
+        label.style.border = "1px solid black";
+        label.style.fontSize = "1.25em";
+    }
+
+    function formatBtn(elem) {
+        elem.style.boxSizing = "border-box";
+        elem.style.textAlign = "center";
+        elem.style.width = (100 / airlineInfo.length) + "%";
+        elem.style.height = "40px";
+        elem.style.border = "1px solid #000";
+        elem.style.cursor = "pointer";
+        elem.style.margin = "0px";
+        elem.classList.add("airline-button");
+    }
+
+    function formatTreatmentButton(treatmentButton) {
+        treatmentButton.style.boxSizing = "border-box";
+        treatmentButton.style.textAlign = "center";
+        treatmentButton.style.width = 100 / 3 + "%";
+        treatmentButton.style.height = "40px";
+        treatmentButton.style.lineHeight = "40px";
+        treatmentButton.style.border = "1px solid black";
+        treatmentButton.style.fontSize = "1.25em";
+        treatmentButton.style.cursor = "pointer";
+        treatmentButton.classList.add("treatment-button");
+    }
+
+    function go() {
+        const flightNumberElem = document.getElementById("txtFlightNo");
+        const tailNumberElem = document.getElementById("txtRegistration");
+        const aircraftElem = document.getElementById("txtAircraftTypeCd");
+        const gateElem = document.getElementById("Gate_Id");
+        const carrierElem = document.getElementById("CarrierCdOACI");
+
+        let selectedAirlineCode;
+        let airlineIsSelected = false;
+
+        for (var i = 0; i < airlineInfo.length; i++) {
+            if (airlineInfo[i][1]) {
+                selectedAirlineCode = airlineInfo[i][0];
+                airlineIsSelected = true;
+            }
+        }
+
+        if (airlineIsSelected) {
+            aircraftElem.value = parseTailNumber(tailInput.value);
+            gateElem.value = parseGateNumber(parseInt(gateInput.value));
+
+            // ** TODO check tail number against Airline **
+
+            // assign flight and tail numbers to the form
+            if (airlineIsSelected) {
+                if (flightInput.value != "") {
+                    flightNumberElem.value = selectedAirlineCode + flightInput.value;
+                }
+                if (tailInput.value != "") {
+                    if (isNaN(tailInput.value)) {
+                        tailNumberElem.value = tailInput.value.toUpperCase();
+                    } else {
+                        tailNumberElem.value = selectedAirlineCode + tailInput.value;
+                    }
+                }
+                carrierElem.value = selectedAirlineCode;
+            }
+
+            commitTreatment();
+
+            // clear inputs
+            changeTreatment("");
+            flightInput.value = "";
+            tailInput.value = "";
+            gateInput.value = ""
+
+        }
+
+
+    }
+
+    function parseGateNumber(input) {
+        // gates with non-sequential values
+        if (input == 110) {
+            return 973;
+        } else if (input == 111) {
+            return 974;
+        } else if (input == 11) {
+            return 133;
+        } else if (input == 12) {
+            return 132;
+        } else if (input == 13) {
+            return 134;
+        } else if (input == 82) {
+            return 377;
+        } else if (input == 83) {
+            return 378;
+        } else if (input == 84) {
+            return 365;
+        } else if (input == 85) {
+            return 366;
+        } else if (input == 126) {
+            return 12776;
+        } else if (input == 127) {
+            return 12777;
+        }
+
+        // gates with sequential values
+        for (var i = 0; i < 130; i++) {
+            if (i == input) {
+                if (i >= 1 && i <=6) {
+                    return i + 125; // magic numbers provided by Aeromag
+                } else if (i >= 14 && i <= 24) {
+                    return i + 121;
+                } else if (i >= 31 && i <= 40) {
+                    return i + 118;
+                } else if (i >= 50 && i <= 59) {
+                    return i + 282;
+                } else if (i >= 61 && i <= 65) {
+                    return i + 281;
+                } else if (i >= 70 && i <= 73) {
+                    return i + 277;
+                } else if (i >= 74 && i <= 81) {
+                    return i + 281;
+                } else if (i >= 86 && i <= 97) {
+                    return i + 295;
+                }
             }
         }
     }
-}
 
-function commitTreatment() {
-    const treatmentElem1 = document.getElementById("Treatment1_Id");
-    const treatmentElem2 = document.getElementById("Treatment2_Id");
+    function commitTreatment() {
+        const treatmentElem1 = document.getElementById("Treatment1_Id");
+        const treatmentElem2 = document.getElementById("Treatment2_Id");
 
-    if (selectedTreatments[2][1]) { // props
-        treatmentElem1.value = 84;
-        if (selectedTreatments[0][1]) { // t1
-            treatmentElem2.value = 1;
-        } else if (selectedTreatments[1][1]) { // t4
-            treatmentElem2.value = 2;
-        }
-    } else {
-        treatmentElem2.value = -1;
-        if (selectedTreatments[0][1]) { // t1
-            treatmentElem1.value = 1;
-        } else if (selectedTreatments[1][1]) { // t4
-            treatmentElem1.value = 2;
-        }
-    }
-}
-
-function parseTailNumber(input) {
-    input = input.toUpperCase();
-
-    for (var i = 0; i < civilRegistrationKey.length; i++) {
-        if (input == civilRegistrationKey[i][0]) {
-            return civilRegistrationKey[i][1];
-        }
-    }
-    i = 0;
-
-    for (i = 0; i < 999; i++) {
-        if (i == parseInt(input)) {
-            if (i >= 1 && i <= 15) {
-                return "B73W";
-            } else if (i >= 201 && i <= 266) {
-                return "B73W";
-            } else if (i >= 300 && i <= 399) {
-                return "B38M";
-            } else if (i >= 400 && i <= 460) {
-                return "DH8D";
-            } else if (i >= 570 && i <= 589) {
-                return "SF34";
-            } else if (i >= 601 && i <= 615) {
-                return "B736";
-            } else if (i >= 670 && i <= 673) {
-                return "B76W";
-            } else if (i >= 801 && i <= 853) {
-                return "B73H";
+        if (selectedTreatments[2][1]) { // props
+            treatmentElem1.value = 84;
+            if (selectedTreatments[0][1]) { // t1
+                treatmentElem2.value = 1;
+            } else if (selectedTreatments[1][1]) { // t4
+                treatmentElem2.value = 2;
+            }
+        } else {
+            treatmentElem2.value = -1;
+            if (selectedTreatments[0][1]) { // t1
+                treatmentElem1.value = 1;
+            } else if (selectedTreatments[1][1]) { // t4
+                treatmentElem1.value = 2;
             }
         }
     }
 
-    console.log("unknown tail number");
-    return "";
-}
+    function parseTailNumber(input) {
+        input = input.toUpperCase();
+
+        for (var i = 0; i < civilRegistrationKey.length; i++) {
+            if (input == civilRegistrationKey[i][0]) {
+                return civilRegistrationKey[i][1];
+            }
+        }
+        i = 0;
+
+        for (i = 0; i < 999; i++) {
+            if (i == parseInt(input)) {
+                if (i >= 1 && i <= 15) {
+                    return "B73W";
+                } else if (i >= 201 && i <= 266) {
+                    return "B73W";
+                } else if (i >= 300 && i <= 399) {
+                    return "B38M";
+                } else if (i >= 400 && i <= 460) {
+                    return "DH8D";
+                } else if (i >= 570 && i <= 589) {
+                    return "SF34";
+                } else if (i >= 601 && i <= 615) {
+                    return "B736";
+                } else if (i >= 670 && i <= 673) {
+                    return "B76W";
+                } else if (i >= 801 && i <= 853) {
+                    return "B73H";
+                }
+            }
+        }
+
+        console.log("unknown tail number");
+        return "";
+    }
+
+    if (false) {
+        // remove aeromag logo until dark version is created
+        var images = document.getElementsByTagName('img');
+        for (var i = 0; i < images.length; i++) {
+            images[0].parentNode.removeChild(images[0]);
+        }
+
+        // create tickers for theme selection
+        var themeTicker = document.createElement("input");
+        themeTicker.type = "checkbox";
+        // themeTicker.checked = true;
+        themeTicker.onclick = changeTheme;
+        themeTicker.id = "theme-cb";
+        document.body.appendChild(themeTicker);
+
+        changeTheme();
+        function changeTheme() {
+            var bgBlack = "#000";
+            var black = "#000";
+            var white = "#FFF";
+            var magBlue = "#DDD";
+            var green = "#00FF3E";
+            var darkGreen = "#00B32C";
+            var red = "#Fd4a3e";
+            var darkRed = "#B3000C";
+            var themeBg;
+            var themeFg;
+
+            findFirstDescendant("body", "table").classList.remove("border1");
+            findFirstDescendant("ui-id-2", "td").classList.remove("border1");
+            document.getElementById("tdFlightsInColdStorage").classList.remove("border1");
+            document.getElementById("tdFlightsInProgress").classList.remove("border1");
+
+            GM_addStyle(".border2 {padding: 5px!important}");
+            document.getElementById("tdFlightsInProgress").classList.add("border2");
+
+
+            if (themeTicker.checked) {
+                loColor = "#000";
+                themeBg = "{background-color: " + black + " !important}";
+                themeFg = "{color: " + magBlue + " !important}";
+
+                GM_addStyle(".ui-state-default {background: " + bgBlack + " !important}");
+                GM_addStyle(".ui-state-default {color: " + white + "!important}");
+                GM_addStyle("fieldset {border: 0px !important}");
+
+                GM_addStyle("div:not(#gsplus) " + themeBg);
+                GM_addStyle("div:not(#gsplus) " + themeFg);
+
+//                 GM_addStyle("body, html, footer, div, th, tr, td, section, select, input, textarea, button, li " + themeBg);
+//                 GM_addStyle("body, html, h3, footer, div, th, tr, td, select, section, input, textarea, button, a " + themeFg);
+
+//                 GM_addStyle("#gsplus {border: 1px solid " + magBlue + " !important}");
+//                 GM_addStyle("#gsplus div {border: 1px solid " + magBlue + "!important}");
+//                 GM_addStyle("#flight-input {border-left: 2px solid " + magBlue + " !important}");
+//                 GM_addStyle("#treatment-container {border: 0px solid " + magBlue + " !important}");
+            } else {
+                loColor = "#fff";
+                themeBg = "{background-color: #fff !important}";
+                themeFg = "{color: #000 !important}";
+                GM_addStyle("body, tr, th, tbody {border: 0px solid #fff !important}");
+                GM_addStyle(".ui-state-default {background: #9399a0 !important}");
+                GM_addStyle(".ui-state-default {color: #e0e0e0 !important}");
+
+                GM_addStyle("div:not(#gsplus)" + themeBg);
+                GM_addStyle("div:not(#gsplus)" + themeFg);
+
+//                 GM_addStyle("body, html, footer, div, th, tr, td, section, select, button, input, textarea, li " + themeBg);
+//                 GM_addStyle("body, html, h3, footer, div, th, tr, td, select, button, section, input, textarea, a " + themeFg);
+
+
+//                 GM_addStyle("#gsplus {border: 1px solid " + black + " !important}");
+//                 GM_addStyle("#gsplus div {border: 1px solid " + black + "!important}");
+//                 GM_addStyle("#flight-input {border-left: 2px solid " + black + " !important}");
+//                 GM_addStyle("#treatment-container {border: 0px solid " + black + " !important}");
+                flightInput.style.backgroundColor = "#000";
+            }
+            GM_addStyle(".ui-state-active {border: 1px solid  #d3dce0 !important}");
+        }
+
+        var coldStorageTd = document.getElementById("tdFlightsInColdStorage");
+        var coldStorageCb = document.createElement("input");
+        coldStorageCb.type = "checkbox";
+        coldStorageCb.onclick = moveColdStorage;
+        document.body.appendChild(coldStorageCb);
+
+        function moveColdStorage() {
+            GM_addStyle(".top-padding {padding-top: 16%}");
+            GM_addStyle(".notop-padding {padding-top: 0}");
+            if (coldStorageCb.checked){
+                coldStorageTd.classList.add("top-padding");
+            } else {
+                coldStorageTd.classList.remove("top-padding");
+            }
+        }
+
+
+        function findFirstDescendant(parent, tagname) {
+            parent = document.getElementById(parent);
+            var descendants = parent.getElementsByTagName(tagname);
+            if ( descendants.length ){
+                return descendants[0];
+            }
+            return null;
+        }
+    }
 })();
