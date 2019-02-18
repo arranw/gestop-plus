@@ -422,7 +422,7 @@
         // themeTicker.checked = true;
         themeTicker.onclick = changeTheme;
         themeTicker.id = "theme-cb";
-        themeTicker.checked = true;
+        //themeTicker.checked = true;
         document.body.appendChild(themeTicker);
 
         changeTheme();
