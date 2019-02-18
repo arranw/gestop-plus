@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         gs proto
+// @name         gs+
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  try to take over the world!
@@ -16,382 +16,367 @@
 
 (function() {
     'use strict';
-    var labelWidth = "85px";
-    var inputWidth = "145px";
-    var inputMarginTop = "8px";
-    var buttonWidth = "80px";
-    // *** flight strip addons ***
     var flightBox = document.getElementById('dvFlightStrip');
 
-    var addedComponents = document.createElement("div");
-    //     addedComponents.style.width = "40%";
-    addedComponents.id = "addedComps";
+    const docCont = document.createElement("div");
 
-    var inputBase = document.createElement("input");
+    flightBox.parentElement.insertBefore(docCont, flightBox);
+    docCont.style.margin = "20px";
+    docCont.style.width = "200px";
+    docCont.style.fontFamily = "Consolas";
+    docCont.style.border = "1px solid black";
 
-    // Airline Code Select
-    var airlineLabel = document.createElement("div");
-    airlineLabel.style.textAlign = "center";
-    airlineLabel.style.width = labelWidth;
-    airlineLabel.style.float = 'left';
-    airlineLabel.style.marginTop = inputMarginTop;
-    airlineLabel.innerHTML = "Airline";
+    let airlineInfo = [["WJA"], ["WEN"], ["PCO"], [""]];
+    let selectedTreatments = [["T1", false], ["T4", false], ["P", false]];
+    let airlineButtons = [];
+    let civilRegistrationKey = [["GTXO", "A321"]];
 
-    var selectList = document.createElement("select");
-    selectList.id = "mySelect";
-    selectList.style.marginLeft = "10px";
-    selectList.style.width = "152px";
-    var array = ["","WJA","WEN","PCO","QXE","TSC"];
-    for (var i = 0; i < array.length; i++) {
-        var option = document.createElement("option");
-        option.value = array[i];
-        option.text = array[i];
-        selectList.appendChild(option);
+
+    for (let k = 0; k < airlineInfo.length; k++) {
+        airlineInfo[k].push(false);
+        let inputEl = document.createElement("input");
+        inputEl.type = "text";
+        inputEl.style.textTransform = "uppercase";
+        inputEl.maxLength = 3;
+        inputEl.style.fontFamily = "Consolas";
+        inputEl.style.fontSize = "1.5em";
+        if (k !== airlineInfo.length - 1) {
+            inputEl.value = airlineInfo[k][0];
+            inputEl.readOnly = true;
+        }
+        airlineButtons.push(inputEl);
+        formatBtn(airlineButtons[k]);
     }
 
-    // flight number
-    var flightCodeLabel=document.createElement("div");
-    flightCodeLabel.style.width = labelWidth;
-    flightCodeLabel.style.textAlign = "center";
-    flightCodeLabel.style.float='left';
-    flightCodeLabel.style.marginTop = inputMarginTop;
-    flightCodeLabel.innerHTML = "Flight";
+    // last airline box updates when it's changed
+    airlineButtons[airlineButtons.length - 1].onchange = updateAirline;
 
-    var flightCode=document.createElement("input");
-    flightCode.style.width = inputWidth;
-    flightCode.type="text";
-    flightCode.style.marginLeft = "10px";
+    function updateAirline() {
+        airlineInfo[airlineInfo.length - 1][0] = (airlineButtons[airlineButtons.length - 1].value).toUpperCase();
+    }
 
-    // tail number
-    var tailCodeLabel=document.createElement("div");
-    tailCodeLabel.style.textAlign = "center";
-    tailCodeLabel.style.width = labelWidth;
-    tailCodeLabel.style.float = 'left';
-    tailCodeLabel.style.marginTop = inputMarginTop;
-    tailCodeLabel.innerHTML = "Tail";
 
-    var tailCode = document.createElement("input");
-    tailCode.style.width = inputWidth;
-    tailCode.type="text";
-    tailCode.style.marginLeft="10px";
+    for (let i = 0; i < airlineButtons.length; i++) {
+        airlineButtons[i].innerHTML = airlineInfo[i][0];
+        airlineButtons[i].addEventListener("click", function () {
+            for (let j = 0; j < airlineButtons.length; j++) {
+                // airlineButtons[j].style.border = "1px solid #000";
+                airlineButtons[j].style.backgroundColor = "#fff";
+                airlineInfo[j][1] = false;
+            }
+            airlineInfo[i][1] = true;
+            if (airlineInfo[i][1]) {
+                // airlineButtons[i].style.border = "3px solid #33BBFF";
+                airlineButtons[i].style.backgroundColor = "#33BBFF88";
+            } else {
+                // airlineButtons[j].style.border = "1px solid #000";
+                airlineButtons[i].style.backgroundColor = "#fff";
+            }
+        }, false);
+        docCont.appendChild(airlineButtons[i]);
+    }
 
-    // gate field
-    var gateCodeLabel = document.createElement("div");
-    gateCodeLabel.style.textAlign = "center";
-    gateCodeLabel.style.width = labelWidth;
-    gateCodeLabel.style.float='left';
-    gateCodeLabel.style.marginTop = inputMarginTop;
-    gateCodeLabel.innerHTML = "Gate";
 
-    var gateCode = document.createElement("input");
-    gateCode.style.width = inputWidth;
-    gateCode.type="text";
-    gateCode.style.marginLeft="10px";
+    var flightLabel = document.createElement("div");
+    formatLabel(flightLabel);
+    flightLabel.innerHTML = "Flight";
+
+    var flightInput = document.createElement("input");
+    formatInput(flightInput);
+
+    var tailLabel = document.createElement("div");
+    formatLabel(tailLabel);
+    tailLabel.innerHTML = "Tail";
+
+    var tailInput = document.createElement("input");
+    formatInput(tailInput);
+
+    var gateLabel = document.createElement("div");
+    formatLabel(gateLabel);
+    gateLabel.innerHTML = "Gate";
+
+    var gateInput = document.createElement("input");
+    formatInput(gateInput);
+
+    var treatmentButtons = document.createElement("div");
+    treatmentButtons.style.display = "flex";
 
     // t1 button
-    var t1Button=document.createElement("input");
-    t1Button.style.width = buttonWidth;
-    t1Button.type="button";
-    t1Button.value="T1";
-    t1Button.onclick=selectT1;
-
+    var t1Button = document.createElement("div");
+    formatTreatmentButton(t1Button);
+    t1Button.innerHTML = "T1";
+    t1Button.addEventListener("click", function () {
+        changeTreatment("T1")
+    }, false);
     // t4 button
-    var t4Button=document.createElement("input");
-    t4Button.style.width = buttonWidth;
-    t4Button.type="button";
-    t4Button.value="T4";
-    t4Button.onclick=selectT4;
+    var t4Button = document.createElement("div");
+    formatTreatmentButton(t4Button);
+    t4Button.innerHTML = "T4";
+    t4Button.addEventListener("click", function () {
+        changeTreatment("T4")
+    }, false);
+    // props
+    var propButton = document.createElement("div");
+    formatTreatmentButton(propButton);
+    propButton.innerHTML = "Props";
+    propButton.addEventListener("click", function () {
+        changeTreatment("P")
+    }, false);
 
     // go button
-    var goButton=document.createElement("input");
-    goButton.type="button";
-    goButton.value="Go";
-    goButton.style = "border: 2px solid #33BBFF !important";
-    goButton.style.width = buttonWidth;
-    goButton.onclick = alCode;
+    var goButton = document.createElement("div");
+    goButton.style.width = "100%";
+    goButton.innerHTML = "Go";
+    goButton.style.boxSizing = "border-box";
+    goButton.style.border = "1px solid black";
+    goButton.style.fontSize = "1.25em";
+    goButton.style.textAlign = "center";
+    goButton.style.lineHeight = "40px";
+    goButton.style.cursor = "pointer";
+    goButton.onclick = go;
 
-    // select t1
-    function selectT1() {
-        var treatment1 = document.getElementById("Treatment1_Id");
-        treatment1.selectedIndex = 1;
+    flightLabel.appendChild(flightInput);
+    docCont.appendChild(flightLabel);
+
+    tailLabel.appendChild(tailInput);
+    docCont.appendChild(tailLabel);
+
+    gateLabel.appendChild(gateInput);
+    docCont.appendChild(gateLabel);
+
+    treatmentButtons.appendChild(t1Button);
+    treatmentButtons.appendChild(t4Button);
+    treatmentButtons.appendChild(propButton);
+
+    docCont.appendChild(treatmentButtons);
+    docCont.appendChild(goButton);
+
+    function changeTreatment(treatment) { // needs reformatting
+        var i;
+
+        if (treatment == "T1") {
+            selectedTreatments[0][1] = true; // enable T1
+            selectedTreatments[1][1] = false; // disable T4
+            t4Button.style.backgroundColor = "#fff";
+            t1Button.style.backgroundColor = "#33BBFF88";
+        } else if (treatment === "T4") {
+            selectedTreatments[0][1] = false; // disable T1
+            selectedTreatments[1][1] = true; // enable T4
+            t4Button.style.backgroundColor = "#33BBFF88";
+            t1Button.style.backgroundColor = "#fff";
+        }
+        if (treatment == "P") {
+            if (selectedTreatments[2][1]) {
+                propButton.style.backgroundColor = "#fff";
+                selectedTreatments[2][1] = false; // enable props
+            } else {
+                propButton.style.backgroundColor = "#33BBFF88";
+                selectedTreatments[2][1] = true; // enable props
+            }
+        }
+
+//         for (i = 0; i < selectedTreatments.length; i++) {
+//             console.log(selectedTreatments[i][0] + " : " + selectedTreatments[i][1]);
+//         }
     }
 
-    // select t4
-    function selectT4() {
-        var treatment1 = document.getElementById("Treatment1_Id");
-        treatment1.selectedIndex = 2;
+    function formatInput(input) {
+        input.type = "text";
+        input.style.boxSizing = "border-box";
+        input.style.float = "right";
+        input.style.width = "50.5%";
+        input.style.height = "100%";
+        input.style.borderLeft = "2px solid black";
+        input.style.borderRight = "0px solid black";
+        input.style.borderTop = "0px solid black";
+        input.style.borderBottom = "0px solid black";
+        input.style.fontFamily = "Consolas";
+        input.style.fontSize = "1.5em";
+        input.style.textAlign = "center";
+        input.style.color = "#33BBFF";
+        input.style.margin = "0px";
+        input.maxLength = "4";
+        input.style.textTransform = "uppercase";
     }
 
-    // add components at end in one block for easier reorganizing
-    addedComponents.appendChild(airlineLabel);
-    addedComponents.appendChild(selectList);
-    addedComponents.appendChild(document.createElement("br"));
-    addedComponents.appendChild(flightCodeLabel);
-    addedComponents.appendChild(flightCode);
-    addedComponents.appendChild(document.createElement("br"));
-    addedComponents.appendChild(tailCodeLabel);
-    addedComponents.appendChild(tailCode);
-    addedComponents.appendChild(document.createElement("br"));
-    addedComponents.appendChild(gateCodeLabel);
-    addedComponents.appendChild(gateCode);
-    addedComponents.appendChild(document.createElement("br"));
-    addedComponents.appendChild(t1Button);
-    addedComponents.appendChild(t4Button);
-    addedComponents.appendChild(goButton);
-    flightBox.parentElement.insertBefore(addedComponents, flightBox);
 
-    function alCode() {
+    function formatLabel(label) {
+        label.style.lineHeight = "40px";
+        label.style.height = "40px";
+        label.style.textAlign = "center";
+        label.style.border = "1px solid black";
+        label.style.fontSize = "1.25em";
+    }
 
-        var flightCodeBox = document.getElementById('txtFlightNo');
+    function formatBtn(elem) {
+        elem.style.boxSizing = "border-box";
+        elem.style.textAlign = "center";
+        elem.style.width = (100 / airlineInfo.length) + "%";
+        elem.style.height = "40px";
+        elem.style.borderLeft = "1px solid #000";
+        elem.style.borderRight = "1px solid #000";
+        elem.style.borderTop = "1px solid #000";
+        elem.style.borderBottom = "1px solid #000";
+        elem.style.cursor = "pointer";
+        elem.style.margin = "0px";
+        // elem.style.backgroundColor = "#666";
+    }
 
-        var select = document.getElementById('mySelect');
-        var regBox = document.getElementById('txtRegistration');
-        var flightBox = document.getElementById('txtFlightNo');
-        var acBox = document.getElementById("txtAircraftTypeCd");
-        var carrierCode = document.getElementById("CarrierCdOACI");
+    function formatTreatmentButton(treatmentButton) {
+        treatmentButton.style.boxSizing = "border-box";
+        treatmentButton.style.textAlign = "center";
+        treatmentButton.style.width = 100 / 3 + "%";
+        treatmentButton.style.height = "40px";
+        treatmentButton.style.lineHeight = "40px";
+        treatmentButton.style.border = "1px solid black";
+        treatmentButton.style.fontSize = "1.25em";
+        treatmentButton.style.cursor = "pointer";
+    }
 
-        var hasFlightCode = false;
-        var hasRegCode = false;
+    function go() {
+        const flightNumberElem = document.getElementById("txtFlightNo");
+        const tailNumberElem = document.getElementById("txtRegistration");
+        const aircraftElem = document.getElementById("txtAircraftTypeCd");
+        const gateElem = document.getElementById("Gate_Id");
+        const carrierElem = document.getElementById("CarrierCdOACI");
 
-        var flightTextValue = flightCodeBox.value.toUpperCase();
-        var regTextValue = regBox.value.toUpperCase();
-        carrierCode.value = select.value;
-        
+        let selectedAirlineCode;
+        let airlineIsSelected = false;
 
+        for (var i = 0; i < airlineInfo.length; i++) {
+            if (airlineInfo[i][1]) {
+                selectedAirlineCode = airlineInfo[i][0];
+                airlineIsSelected = true;
+            }
+        }
 
-        if (select.value !== "") {
-            flightBox.value = flightCode.value;
-            regBox.value = tailCode.value;
+        aircraftElem.value = parseTailNumber(tailInput.value);
+        gateElem.value = parseGateNumber(parseInt(gateInput.value));
 
-            // begin loop at 1 to avoid searching for "" in array
-            for (var i = 1; i < array.length; i++) {
-                if (flightTextValue.includes(array[i])) {
-                    hasFlightCode = true;
+        // ** TODO check tail number against Airline **
+
+        // assign flight and tail numbers to the form
+        if (airlineIsSelected) {
+            if (flightInput.value != "") {
+                flightNumberElem.value = selectedAirlineCode + flightInput.value;
+            }
+            if (tailInput.value != "") {
+                if (isNaN(tailInput.value)) {
+                    tailNumberElem.value = tailInput.value.toUpperCase();
+                } else {
+                    tailNumberElem.value = selectedAirlineCode + tailInput.value;
                 }
-                if (regTextValue.includes(array[i])) {
-                    hasRegCode = true;
+            }
+            carrierElem.value = selectedAirlineCode;
+        }
+
+        setTreatment();
+    }
+
+    function parseGateNumber(input) {
+        // gates with non-sequential values
+        if (input == 110) {
+            return 973;
+        } else if (input == 111) {
+            return 974;
+        } else if (input == 11) {
+            return 131;
+        } else if (input == 12) {
+            return 133;
+        } else if (input == 13) {
+            return 132;
+        } else if (input == 82) {
+            return 377;
+        } else if (input == 83) {
+            return 378;
+        } else if (input == 84) {
+            return 365;
+        } else if (input == 85) {
+            return 366;
+        } else if (input == 126) {
+            return 12776;
+        } else if (input == 127) {
+            return 12777;
+        }
+
+        // gates with sequential values
+        for (var i = 0; i < 130; i++) {
+            if (i == input) {
+                if (i >= 1 && i <=6) {
+                    return i + 125; // magic numbers provided by Aeromag
+                } else if (i >= 14 && i <= 24) {
+                    return i + 121;
+                } else if (i >= 31 && i <= 40) {
+                    return i + 118;
+                } else if (i >= 50 && i <= 59) {
+                    return i + 282;
+                } else if (i >= 61 && i <= 65) {
+                    return i + 281;
+                } else if (i >= 70 && i <= 73) {
+                    return i + 277;
+                } else if (i >= 74 && i <= 81) {
+                    return i + 281;
+                } else if (i >= 86 && i <= 97) {
+                    return i + 295;
                 }
             }
-
-            if (hasFlightCode) {
-                flightCodeBox.value = select.value + flightCodeBox.value.substr(3, flightCodeBox.value.length);
-            } else {
-                flightCodeBox.value = select.value + flightCodeBox.value;
-            }
-            if (hasRegCode) {
-                regBox.value = select.value + regBox.value.substr(3, regBox.value.length);
-            } else {
-                regBox.value = select.value + regBox.value;
-            }
-
-            for (var j =0; j < 999; j++) {
-                if (j == parseInt(regBox.value.substr(3, regBox.value.length))) {
-                    //                 alert("nonono");
-                    if (j >= 0 && j <= 15) {
-                        acBox.value = "B73W";
-                    } else if (j >= 201 && j <= 266) {
-                        acBox.value = "B73W";
-                    } else if (j >= 300 && j <= 399) {
-                        acBox.value = "B38M";
-                    } else if (j >= 400 && j <= 460) {
-                        acBox.value = "DH8D";
-                    } else if (j >= 570 && j <= 589) {
-                        acBox.value = "SF34";
-                    } else if (j >= 601 && j <= 615) {
-                        acBox.value = "B736";
-                    } else if (j >= 670 && j <= 673) {
-                        acBox.value = "B76W";
-                    } else if (j >= 801 && j <= 853) {
-                        acBox.value = "B73H";
-                    } else {
-
-                    }
-                }
-                if (regBox.value.includes("GTXO")) acBox.value = "A321";
-            }
-
-
-
-            // Gate Selector
-            var gateSelect = document.getElementById("Gate_Id");
-
-            if (gateCode.value == "A2" || gateCode.value == "a2") {
-                gateSelect.value = "12778";}
-            else if (gateCode.value == "A9" || gateCode.value == "a9") {
-                gateSelect.value = "12930";}
-            else if (gateCode.value == "1") {
-                gateSelect.value = 126;}
-            else if (gateCode.value == "110") {
-                gateSelect.value = 973;}
-            else if (gateCode.value == "111") {
-                gateSelect.value = 974;}
-            else if (gateCode.value == "2") {
-                gateSelect.value = 127;}
-            else if (gateCode.value == "3") {
-                gateSelect.value = 128;}
-            else if (gateCode.value == "4") {
-                gateSelect.value = 129;}
-            else if (gateCode.value == "5") {
-                gateSelect.value = 130;}
-            else if (gateCode.value == "6") {
-                gateSelect.value = 131;}
-            else if (gateCode.value == "11") {
-                gateSelect.value = 133;}
-            else if (gateCode.value == "12") {
-                gateSelect.value = 132;}
-            else if (gateCode.value == "13") {
-                gateSelect.value = 134;}
-            else if (gateCode.value == "14") {
-                gateSelect.value = 135;}
-            else if (gateCode.value == "15") {
-                gateSelect.value = 136;}
-            else if (gateCode.value == "16") {
-                gateSelect.value = 137;}
-            else if (gateCode.value == "17") {
-                gateSelect.value = 138;}
-            else if (gateCode.value == "18") {
-                gateSelect.value = 139;}
-            else if (gateCode.value == "19") {
-                gateSelect.value = 140;}
-            else if (gateCode.value == "20") {
-                gateSelect.value = 141;}
-            else if (gateCode.value == "21") {
-                gateSelect.value = 142;}
-            else if (gateCode.value == "22") {
-                gateSelect.value = 143;}
-            else if (gateCode.value == "23") {
-                gateSelect.value = 144;}
-            else if (gateCode.value == "24") {
-                gateSelect.value = 145;}
-            else if (gateCode.value == "31") {
-                gateSelect.value = 149;}
-            else if (gateCode.value == "32") {
-                gateSelect.value = 150;}
-            else if (gateCode.value == "33") {
-                gateSelect.value = 151;}
-            else if (gateCode.value == "34") {
-                gateSelect.value = 152;}
-            else if (gateCode.value == "35") {
-                gateSelect.value = 153;}
-            else if (gateCode.value == "36") {
-                gateSelect.value = 154;}
-            else if (gateCode.value == "37") {
-                gateSelect.value = 155;}
-            else if (gateCode.value == "38") {
-                gateSelect.value = 156;}
-            else if (gateCode.value == "39") {
-                gateSelect.value = 157;}
-            else if (gateCode.value == "40") {
-                gateSelect.value = 158;}
-            else if (gateCode.value == "50") {
-                gateSelect.value = 332;}
-            else if (gateCode.value == "51") {
-                gateSelect.value = 333;}
-            else if (gateCode.value == "52") {
-                gateSelect.value = 334;}
-            else if (gateCode.value == "53") {
-                gateSelect.value = 335;}
-            else if (gateCode.value == "54") {
-                gateSelect.value = 336;}
-            else if (gateCode.value == "55") {
-                gateSelect.value = 337;}
-            else if (gateCode.value == "56") {
-                gateSelect.value = 338;}
-            else if (gateCode.value == "57") {
-                gateSelect.value = 339;}
-            else if (gateCode.value == "58") {
-                gateSelect.value = 340;}
-            else if (gateCode.value == "59") {
-                gateSelect.value = 341;}
-            else if (gateCode.value == "61") {
-                gateSelect.value = 342;}
-            else if (gateCode.value == "62") {
-                gateSelect.value = 343;}
-            else if (gateCode.value == "63") {
-                gateSelect.value = 344;}
-            else if (gateCode.value == "64") {
-                gateSelect.value = 345;}
-            else if (gateCode.value == "65") {
-                gateSelect.value = 346;}
-            else if (gateCode.value == "70") {
-                gateSelect.value = 347;}
-            else if (gateCode.value == "71") {
-                gateSelect.value = 348;}
-            else if (gateCode.value == "72") {
-                gateSelect.value = 349;}
-            else if (gateCode.value == "73") {
-                gateSelect.value = 350;}
-            else if (gateCode.value == "74") {
-                gateSelect.value = 355;}
-            else if (gateCode.value == "75") {
-                gateSelect.value = 356;}
-            else if (gateCode.value == "76") {
-                gateSelect.value = 357;}
-            else if (gateCode.value == "77") {
-                gateSelect.value = 358;}
-            else if (gateCode.value == "78") {
-                gateSelect.value = 359;}
-            else if (gateCode.value == "79") {
-                gateSelect.value = 360;}
-            else if (gateCode.value == "80") {
-                gateSelect.value = 361;}
-            else if (gateCode.value == "81") {
-                gateSelect.value = 362;}
-            else if (gateCode.value == "82") {
-                gateSelect.value = 377;}
-            else if (gateCode.value == "83") {
-                gateSelect.value = 378;}
-            else if (gateCode.value == "84") {
-                gateSelect.value = 365;}
-            else if (gateCode.value == "85") {
-                gateSelect.value = 366;}
-            else if (gateCode.value == "86") {
-                gateSelect.value = 381;}
-            else if (gateCode.value == "87") {
-                gateSelect.value = 382;}
-            else if (gateCode.value == "88") {
-                gateSelect.value = 383;}
-            else if (gateCode.value == "89") {
-                gateSelect.value = 384;}
-            else if (gateCode.value == "90") {
-                gateSelect.value = 385;}
-            else if (gateCode.value == "91") {
-                gateSelect.value = 386;}
-            else if (gateCode.value == "92") {
-                gateSelect.value = 387;}
-            else if (gateCode.value == "93") {
-                gateSelect.value = 388;}
-            else if (gateCode.value == "94") {
-                gateSelect.value = 389;}
-            else if (gateCode.value == "95") {
-                gateSelect.value = 390;}
-            else if (gateCode.value == "96") {
-                gateSelect.value = 391;}
-            else if (gateCode.value == "392") {
-                gateSelect.value = 97;}
-            else if(gateCode.value == "126") {
-                gateSelect.value = 12776;}
-            else if (gateCode.value == "127") {
-                gateSelect.value = 12776;
-            } else {
-                alert("Invalid Gate: " + gateCode.value);
-            }
-
-            // clear inputs
-            gateCode.value = "";
-            flightCode.value = "";
-            tailCode.value = "";
         }
     }
 
-    function findFirstDescendant(parent, tagname) {
-        parent = document.getElementById(parent);
-        var descendants = parent.getElementsByTagName(tagname);
-        if ( descendants.length ){
-            return descendants[0];
+    function setTreatment() {
+        const treatmentElem1 = document.getElementById("Treatment1_Id");
+        const treatmentElem2 = document.getElementById("Treatment2_Id");
+
+        if (selectedTreatments[2][1]) { // props
+            treatmentElem1.value = 84;
+            if (selectedTreatments[0][1]) { // t1
+                treatmentElem2.value = 1;
+            } else if (selectedTreatments[1][1]) { // t4
+                treatmentElem2.value = 2;
+            }
+        } else {
+            treatmentElem2.value = -1;
+            if (selectedTreatments[0][1]) { // t1
+                treatmentElem1.value = 1;
+            } else if (selectedTreatments[1][1]) { // t4
+                treatmentElem1.value = 2;
+            }
         }
-        return null;
     }
 
-    // Your code here...
+    function parseTailNumber(input) {
+        input = input.toUpperCase();
+
+        for (var i = 0; i < civilRegistrationKey.length; i++) {
+            if (input == civilRegistrationKey[i][0]) {
+                return civilRegistrationKey[i][1];
+            }
+        }
+        i = 0;
+
+        for (i = 0; i < 999; i++) {
+            if (i == parseInt(input)) {
+                if (i >= 1 && i <= 15) {
+                    return "B73W";
+                } else if (i >= 201 && i <= 266) {
+                    return "B73W";
+                } else if (i >= 300 && i <= 399) {
+                    return "B38M";
+                } else if (i >= 400 && i <= 460) {
+                    return "DH8D";
+                } else if (i >= 570 && i <= 589) {
+                    return "SF34";
+                } else if (i >= 601 && i <= 615) {
+                    return "B736";
+                } else if (i >= 670 && i <= 673) {
+                    return "B76W";
+                } else if (i >= 801 && i <= 853) {
+                    return "B73H";
+                }
+            }
+        }
+
+        console.log("unknown tail number");
+        return "";
+    }
 })();
