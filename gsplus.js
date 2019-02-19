@@ -422,7 +422,7 @@
         // themeTicker.checked = true;
         themeTicker.onclick = changeTheme;
         themeTicker.id = "theme-cb";
-        //themeTicker.checked = true;
+//         themeTicker.checked = true;
         document.body.appendChild(themeTicker);
 
         changeTheme();
@@ -439,13 +439,13 @@
             if (themeTicker.checked) {
                 loColor = "#000";
                 borderColor = "#fff";
-                GM_addStyle(":not(button):not(.treatment-button):not(.airline-button) {background-color: black !important; }");
-                GM_addStyle(":not(button):not(.treatment-button):not(.flight-input) {color: #DDD !important; }");
+                GM_addStyle(":not(button):not(.treatment-button):not(.airline-button):not(.time) {background-color: black !important; }");
+                GM_addStyle(":not(button):not(.treatment-button):not(.flight-input):not(.time) {color: #DDD !important; }");
             } else {
                 loColor = "#fff";
                 borderColor = "#000";
-                GM_addStyle(":not(button):not(.treatment-button):not(.airline-button) {background-color: white !important;}");
-                GM_addStyle(":not(button):not(.treatment-button):not(.flight-input) {color: #000 !important;}");
+                GM_addStyle(":not(button):not(.treatment-button):not(.airline-button):not(.time) {background-color: white !important;}");
+                GM_addStyle(":not(button):not(.treatment-button):not(.flight-input):not(.time) {color: #000 !important;}");
             }
             GM_addStyle(".airline-button {border: 1px solid " + borderColor + " !important;}");
             GM_addStyle(".treatment-button {border: 1px solid " + borderColor + " !important;}");
