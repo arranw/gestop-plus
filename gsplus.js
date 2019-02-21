@@ -20,6 +20,8 @@
     const docCont = document.createElement("div");
     docCont.id = "gsplus";
     docCont.style.margin = "0px";
+    docCont.style.marginRight = "20px";
+    docCont.style.float = "left";
     docCont.style.width = "200px";
     docCont.style.fontFamily = "Consolas";
     docCont.style.border = "1px solid black";
@@ -28,7 +30,7 @@
     let airlineInfo = [["WJA"], ["WEN"], ["PCO"], [""]];
     let selectedTreatments = [["T1", false], ["T4", false], ["P", false]];
     let airlineButtons = [];
-    let civilRegistrationKey = [["GTXO", "A321"]];
+    let civilRegistrationKey = [["GTXO", "A321"],["GTXV", "A321"],["FTXL","A321"]];
 
 
     for (let k = 0; k < airlineInfo.length; k++) {
@@ -58,6 +60,7 @@
 
     for (let i = 0; i < airlineButtons.length; i++) {
         airlineButtons[i].innerHTML = airlineInfo[i][0];
+        airlineButtons[i].placeholder = "---";
         airlineButtons[i].addEventListener("click", function () {
             for (let j = 0; j < airlineButtons.length; j++) {
                 // airlineButtons[j].style.border = "1px solid #000";
@@ -82,6 +85,7 @@
     flightLabel.innerHTML = "Flight";
 
     var flightInput = document.createElement("input");
+    flightInput.placeholder = "----";
     formatInput(flightInput);
 
     var tailLabel = document.createElement("div");
@@ -89,6 +93,7 @@
     tailLabel.innerHTML = "Tail";
 
     var tailInput = document.createElement("input");
+    tailInput.placeholder = "----";
     formatInput(tailInput);
 
     var gateLabel = document.createElement("div");
@@ -96,6 +101,7 @@
     gateLabel.innerHTML = "Gate";
 
     var gateInput = document.createElement("input");
+    gateInput.placeholder = "--";
     formatInput(gateInput);
 
     var treatmentButtons = document.createElement("div");
@@ -191,6 +197,9 @@
         }
     }
 
+
+
+
     function formatInput(input) {
         input.type = "text";
         input.style.boxSizing = "border-box";
@@ -263,7 +272,7 @@
 
         if (airlineIsSelected) {
             aircraftElem.value = parseTailNumber(tailInput.value);
-            gateElem.value = parseGateNumber(parseInt(gateInput.value));
+            gateElem.value = parseGateNumber(gateInput.value);
 
             // ** TODO check tail number against Airline **
 
@@ -274,7 +283,7 @@
                 }
                 if (tailInput.value != "") {
                     if (isNaN(tailInput.value)) {
-                        tailNumberElem.value = tailInput.value.toUpperCase();
+                        tailNumberElem.value = "C-" + tailInput.value.toUpperCase();
                     } else {
                         tailNumberElem.value = selectedAirlineCode + tailInput.value;
                     }
@@ -324,7 +333,12 @@
             return 12776;
         } else if (input == 127) {
             return 12777;
+        } else if (input.toUpperCase() == "A2") {
+            return 12778;
+        } else if (input.toUpperCase() == "A9") {
+            return 12930;
         }
+
 
         // gates with sequential values
         for (var i = 0; i < 130; i++) {
@@ -422,12 +436,16 @@
         // themeTicker.checked = true;
         themeTicker.onclick = changeTheme;
         themeTicker.id = "theme-cb";
-//         themeTicker.checked = true;
+        //         themeTicker.checked = true;
         document.body.appendChild(themeTicker);
 
         changeTheme();
 
         function changeTheme() {
+            var dMessage = document.getElementsByClassName("alterbackground")[0];
+            dMessage.getElementsByTagName("tbody")[0].style.height = "150px";
+
+            // styling
             findFirstDescendant("body", "table").classList.remove("border1");
             findFirstDescendant("ui-id-2", "td").classList.remove("border1");
             document.getElementById("tdFlightsInColdStorage").classList.remove("border1");
@@ -453,7 +471,7 @@
             GM_addStyle(".input-label {border: 1px solid " + borderColor + " !important;}");
             GM_addStyle(".flight-input {border-left: 2px solid " + borderColor + " !important;}");
             GM_addStyle("#go-button {border: 1px solid " + borderColor + " !important;}");
-
+            GM_addStyle("#dvDeicingConditions {font-size: 1.3em}");
 
             // color airline buttons
             for (let i = 0; i < airlineButtons.length; i++) {
@@ -465,20 +483,20 @@
             }
             // color treatment buttons
             if (selectedTreatments[0][1]){
-                    t1Button.style.backgroundColor = hiColor;
-                } else {
-                    t1Button.style.backgroundColor = loColor;
-                }
-                if (selectedTreatments[1][1]){
-                    t4Button.style.backgroundColor = hiColor;
-                } else {
-                    t4Button.style.backgroundColor = loColor;
-                }
-                if (selectedTreatments[2][1]){
-                    propButton.style.backgroundColor = hiColor;
-                } else {
-                    propButton.style.backgroundColor = loColor;
-                }
+                t1Button.style.backgroundColor = hiColor;
+            } else {
+                t1Button.style.backgroundColor = loColor;
+            }
+            if (selectedTreatments[1][1]){
+                t4Button.style.backgroundColor = hiColor;
+            } else {
+                t4Button.style.backgroundColor = loColor;
+            }
+            if (selectedTreatments[2][1]){
+                propButton.style.backgroundColor = hiColor;
+            } else {
+                propButton.style.backgroundColor = loColor;
+            }
         }
 
         var coldStorageTd = document.getElementById("tdFlightsInColdStorage");
@@ -496,8 +514,6 @@
                 coldStorageTd.classList.remove("top-padding");
             }
         }
-
-
         function findFirstDescendant(parent, tagname) {
             parent = document.getElementById(parent);
             var descendants = parent.getElementsByTagName(tagname);
