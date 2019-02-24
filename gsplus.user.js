@@ -2,7 +2,6 @@
 // @name         gs+
 // @namespace    http://tampermonkey.net/
 // @version      1.022401
-// @version      0.1
 // @description  try to take over the world!
 // @author       You
 // @match        https://home.aeromag2000.com/gestoplight/
