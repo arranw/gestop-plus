@@ -6,7 +6,7 @@
 // @author       You
 // @match        https://home.aeromag2000.com/gestoplight/
 // @grant        GM_addStyle
-// @downloadURL  https://raw.githubusercontent.com/arranw/gestop-plus/master/gsplus.user.js
+// @downloadURL  https://github.com/arranw/gestop-plus/raw/master/gsplus.user.js
 // ==/UserScript==
 
 
