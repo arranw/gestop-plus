@@ -8,7 +8,6 @@
 // @match        https://home.aeromag2000.com/gestoplight/
 // @grant        GM_addStyle
 // @downloadURL  https://raw.githubusercontent.com/arranw/gestop-plus/master/gsplus.js
-// @updateURL    https://raw.githubusercontent.com/arranw/gestop-plus/master/gsplus.js
 // ==/UserScript==
 
 
