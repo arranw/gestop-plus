@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         gs+
 // @namespace    http://tampermonkey.net/
+// @version      1.0224
 // @version      0.1
 // @description  try to take over the world!
 // @author       You
 // @match        https://home.aeromag2000.com/gestoplight/
+// @grant        GM_addStyle
 // @downloadURL  https://raw.githubusercontent.com/arranw/gestop-plus/master/gsplus.js
 // @updateURL    https://raw.githubusercontent.com/arranw/gestop-plus/master/gsplus.js
-// @version      1.0224
-// @grant        GM_addStyle
 // ==/UserScript==
 
 
