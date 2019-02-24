@@ -5,6 +5,9 @@
 // @description  try to take over the world!
 // @author       You
 // @match        https://home.aeromag2000.com/gestoplight/
+// @downloadURL  https://raw.githubusercontent.com/arranw/gestop-plus/master/gsplus.js
+// @updateURL    https://raw.githubusercontent.com/arranw/gestop-plus/master/gsplus.js
+// @version      1.0224
 // @grant        GM_addStyle
 // ==/UserScript==
 
