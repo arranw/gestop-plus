@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         gs+
 // @namespace    http://tampermonkey.net/
-// @version      1.022401
+// @version      1.2.1
 // @description  try to take over the world!
 // @author       You
 // @match        https://home.aeromag2000.com/gestoplight/
@@ -526,7 +526,7 @@
     }
     
     var versionNum = document.createElement("p");
-    versionNum.innerHTML = "GS+ Updated Feb 24";
+    versionNum.innerHTML = "update test";
     versionNum.style.float = "right";
     versionNum.style.marginRight = "10px";
     document.body.appendChild(versionNum);
