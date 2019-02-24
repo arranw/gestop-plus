@@ -523,4 +523,10 @@
             return null;
         }
     }
+    
+    var versionNum = document.createElement("p");
+    versionNum.innerHTML = "GS+ Updated Feb 21";
+    versionNum.style.float = "right";
+    versionNum.style.marginRight = "10px";
+    document.body.appendChild(versionNum);
 })();
