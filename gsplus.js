@@ -526,7 +526,7 @@
     }
     
     var versionNum = document.createElement("p");
-    versionNum.innerHTML = "update test";
+    versionNum.innerHTML = "update test2222";
     versionNum.style.float = "right";
     versionNum.style.marginRight = "10px";
     document.body.appendChild(versionNum);
